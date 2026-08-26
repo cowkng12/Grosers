@@ -1964,31 +1964,6 @@ function StoreApp() {
 }
 
 function App() {
-  const [isLaunching, setIsLaunching] = useState(true)
-  const [launchProgress, setLaunchProgress] = useState(0)
-  const [isRevealing, setIsRevealing] = useState(false)
-
-  useEffect(() => {
-      document.title = ' '
-      const startedAt = performance.now()
-      const progressTimer = window.setInterval(() => {
-        const nextProgress = Math.min(100, Math.round(((performance.now() - startedAt) / 2700) * 100))
-        setLaunchProgress(nextProgress)
-      }, 30)
-      const launchTimer = window.setTimeout(() => {
-        setLaunchProgress(100)
-        setIsLaunching(false)
-        setIsRevealing(true)
-      }, 3500)
-      const revealTimer = window.setTimeout(() => setIsRevealing(false), 3800)
-
-    return () => {
-      window.clearInterval(progressTimer)
-      window.clearTimeout(launchTimer)
-      window.clearTimeout(revealTimer)
-    }
-  }, [])
-
   if (window.location.pathname === '/activate') {
     return <ActivationPage />
   }
@@ -1997,11 +1972,7 @@ function App() {
     return <WalletPaymentPage />
   }
 
-  if (isLaunching) {
-    return <LaunchSplash progress={launchProgress} />
-  }
-
-  return <div className={isRevealing ? 'app-reveal is-blurred' : 'app-reveal'}><StoreApp /></div>
+  return <StoreApp />
 }
 
 export default App
