@@ -7,7 +7,7 @@ const products = [
     group: 'ChatGPT',
     brand: 'ChatGPT',
     plan: 'Plus Ready Account',
-    price: 1.5,
+    price: 2,
   },
   {
     id: 'chatgpt-go',
@@ -270,7 +270,33 @@ const sellerUsername = 'metifrysell'
 const defaultApiBase = import.meta.env.VITE_API_BASE_URL?.trim() || (import.meta.env.DEV ? 'http://localhost:3001' : '')
 const languages = ['ru', 'en', 'zh']
 const productGroups = ['Все', 'ChatGPT', 'Grok', 'Claude', 'Cursor', 'Kimi', 'Search', 'Coding', 'Image', 'Video', 'Voice', 'Productivity', 'API', 'Perplexity', 'Gemini', 'Copilot', 'Midjourney', 'Runway', 'Suno', 'Kling', 'Leonardo AI', 'ElevenLabs', 'Canva', 'Notion AI', 'Poe']
-const topupAmounts = [1, 1.5, ...Array.from({ length: 20 }, (_, index) => (index + 1) * 5)]
+const topupAmounts = [1, ...Array.from({ length: 20 }, (_, index) => (index + 1) * 5)]
+const defaultProductStockCounts = (() => {
+  const counts = {}
+
+  const clampStockCount = (value) => Math.max(4, Math.min(48, value))
+  const stableHash = (input) =>
+    String(input).split('').reduce((hash, char) => ((hash << 5) - hash + char.charCodeAt(0)) | 0, 0)
+
+  const defaultStockForProduct = (product) => {
+    if (product.id === 'chatgpt-plus-ready') return 48
+    if (product.id === 'chatgpt-go') return 15
+    if (product.id === 'chatgpt-business-seat') return 12
+    if (product.id === 'chatgpt-pro-ready') return 8
+
+    const price = Number(product.price) || 0
+    const pricePressure = Math.round(price * 0.35)
+    const jitter = (Math.abs(stableHash(product.id)) % 3) - 1
+
+    return clampStockCount(25 - pricePressure + jitter)
+  }
+
+  products.forEach((product) => {
+    counts[product.id] = defaultStockForProduct(product)
+  })
+
+  return counts
+})()
 const productAvatars = {
   ChatGPT: { src: 'https://www.google.com/s2/favicons?domain=chatgpt.com&sz=128', fallback: 'GPT' },
   Grok: { src: 'https://www.google.com/s2/favicons?domain=x.com&sz=128', fallback: 'X' },
@@ -299,11 +325,31 @@ const productAvatars = {
 }
 
 const promoBonuses = {
-  SUB200: 25,
-  SUBS200: 25,
   GROZERS20: 20,
-  KIMI15: 15,
-  START10: 10,
+  '100SUBS': 30,
+}
+
+const roulettePrizes = [
+  { id: 'balance-025', icon: '$', image: '', labels: { ru: '$0.25 на баланс', en: '$0.25 balance', zh: '$0.25 余额' } },
+  { id: 'balance-050', icon: '$', image: '', labels: { ru: '$0.50 на баланс', en: '$0.50 balance', zh: '$0.50 余额' } },
+  { id: 'promo-20', icon: '%', image: '', labels: { ru: 'Промокод 20%', en: '20% promo code', zh: '20% 优惠码' } },
+  { id: 'balance-100', icon: '$', image: '', labels: { ru: '$1 на баланс', en: '$1 balance', zh: '$1 余额' } },
+  { id: 'chatgpt-plus', icon: 'GPT', image: '/chatgpt-logo-white.png', labels: { ru: 'ChatGPT Plus', en: 'ChatGPT Plus', zh: 'ChatGPT Plus' } },
+  { id: 'cursor-pro', icon: 'CR', image: '/cursor-logo-white.png', labels: { ru: 'Cursor Pro', en: 'Cursor Pro', zh: 'Cursor Pro' } },
+  { id: 'claude-pro', icon: 'CL', image: '/claude-logo-white.png', labels: { ru: 'Claude Pro', en: 'Claude Pro', zh: 'Claude Pro' } },
+]
+const rouletteReelPrizes = Array.from({ length: 40 }, () => roulettePrizes).flat()
+
+const rouletteText = {
+  ru: {
+    tab: 'Рулетка', title: 'Рулетка призов', lead: 'Один бесплатный прокрут каждые 24 часа', spin: 'Крутить бесплатно', spinning: 'Крутим...', used: 'Возвращайтесь через', cooldown: 'Возвращайтесь через', prizes: 'Что можно выиграть', won: 'Ваш приз', error: 'Не удалось прокрутить. Попробуйте позже.', promoHint: 'Используйте этот персональный код при следующем пополнении.', balanceHint: 'Приз уже зачислен на ваш баланс.', productHint: 'Товар добавлен в заказы, данные отправлены в бот.', telegram: 'Откройте мини-приложение через Telegram.',
+  },
+  en: {
+    tab: 'Roulette', title: 'Prize roulette', lead: 'One free spin every 24 hours', spin: 'Spin for free', spinning: 'Spinning...', used: 'Come back in', cooldown: 'Come back in', prizes: 'Available prizes', won: 'You won', error: 'Could not spin. Try again later.', promoHint: 'Use this personal code on your next balance top-up.', balanceHint: 'The prize has been added to your balance.', productHint: 'The product is in Orders and access details were sent by the bot.', telegram: 'Open the mini app through Telegram.',
+  },
+  zh: {
+    tab: '幸运转盘', title: '奖品转盘', lead: '每24小时可免费抽奖一次', spin: '免费抽奖', spinning: '抽奖中...', used: '请在此时间后返回', cooldown: '请在此时间后返回', prizes: '可赢取的奖品', won: '你赢得了', error: '抽奖失败，请稍后重试。', promoHint: '下次充值时使用此专属优惠码。', balanceHint: '奖品已存入你的余额。', productHint: '商品已加入订单，领取信息已由机器人发送。', telegram: '请通过 Telegram 打开小程序。',
+  },
 }
 
 const translations = {
@@ -311,9 +357,11 @@ const translations = {
     languageLabel: 'RU',
     eyebrow: 'GrozersStore',
     title: 'GrozersStore: подписки на нейросервисы',
-    hero: 'Выберите товар и подайте заявку на покупку.',
+    hero: 'Пополните баланс и выберите продукт.',
     selectPlan: 'Выбрать тариф',
+    popularLabel: 'Чаще всего покупают',
     guarantee: 'Полная гарантия и возможность замены товара при возникновении проблем.',
+    stockLeft: (count) => `Осталось ${count} шт.`,
     promos: {
       'claude-pro-duo': 'Промо-лот: 2 аккаунта Pro — $18',
       'cursor-pro-duo': 'Промо-лот: 2 аккаунта Pro — $18',
@@ -419,9 +467,11 @@ const translations = {
     languageLabel: 'EN',
     eyebrow: 'GrozersStore',
     title: 'GrozersStore: AI service subscriptions',
-    hero: 'Choose a product and submit a purchase request.',
+    hero: 'Top up your balance and choose a product.',
     selectPlan: 'Select plan',
+    popularLabel: 'Most popular',
     guarantee: 'Full guarantee and replacement if any issues arise.',
+    stockLeft: (count) => `${count} left`,
     promos: {
       'claude-pro-duo': 'Promo lot: 2 Accounts Pro — $18',
       'cursor-pro-duo': 'Promo lot: 2 Accounts Pro — $18',
@@ -527,9 +577,11 @@ const translations = {
     languageLabel: '中文',
     eyebrow: 'GrozersStore',
     title: 'GrozersStore：AI 服务订阅',
-    hero: '选择商品并提交购买申请。',
+    hero: '请先充值余额，再选择商品。',
     selectPlan: '选择套餐',
+    popularLabel: '最常购买',
     guarantee: '提供完整保障，如遇问题可更换商品。',
+    stockLeft: (count) => `剩余 ${count} 个`,
     promos: {
       'claude-pro-duo': '优惠商品：2 个 Pro 账号 — $18',
       'cursor-pro-duo': '优惠商品：2 个 Pro 账号 — $18',
@@ -806,6 +858,22 @@ function BrandLogo() {
       </svg>
       <span>GrozersStore</span>
     </div>
+  )
+}
+
+function LaunchSplash({ progress }) {
+  return (
+    <main className="launch-splash" aria-label="GrozersStore loading">
+      <div className="launch-flight" aria-hidden="true">
+        <span className="launch-trail" />
+        <img className="launch-rocket" src="/grozers-launch-rocket.png" alt="" />
+      </div>
+      <img className="launch-brand" src="/grozersstore-brand-reveal.png" alt="GrozersStore, AI Tools, One Hub" />
+      <div className="launch-progress">
+        <div className="launch-loading" aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
+        <strong>{progress}%</strong>
+      </div>
+    </main>
   )
 }
 
@@ -1110,8 +1178,10 @@ function WalletPaymentPage() {
         {payment ? (
           <>
             <div className="wallet-pay-details">
-              <span>{text.amount}</span>
-              <strong>{payment.walletPayment ? `${payment.walletPayment.payableAmount} ${payment.walletPayment.asset}` : formatPrice(payment.payableAmount || payment.amount)}</strong>
+              <div className="wallet-pay-summary">
+                <span>{text.amount}</span>
+                <strong>{payment.walletPayment ? `${payment.walletPayment.payableAmount} ${payment.walletPayment.asset}` : formatPrice(payment.payableAmount || payment.amount)}</strong>
+              </div>
               {!payment.walletPayment ? (
                 <div className="wallet-pay-methods">
                   {payment.cryptoPayAvailable ? <button type="button" onClick={chooseCryptoBot}>{translations[language].cryptoBotMethod}</button> : null}
@@ -1131,10 +1201,14 @@ function WalletPaymentPage() {
               ) : null}
               {payment.walletPayment ? (
                 <>
-                  <span>{text.network}</span>
-                  <strong>{payment.walletPayment.network}</strong>
-                  <span>{text.address}</span>
-                  <code>{payment.walletPayment.address}</code>
+                  <div className="wallet-pay-meta">
+                    <span>{text.network}</span>
+                    <strong>{payment.walletPayment.network}</strong>
+                  </div>
+                  <div className="wallet-pay-address">
+                    <span>{text.address}</span>
+                    <code>{payment.walletPayment.address}</code>
+                  </div>
                 </>
               ) : null}
             </div>
@@ -1154,17 +1228,19 @@ function WalletPaymentPage() {
   )
 }
 
-function ProductCard({ product, onSelect, active, text }) {
+function ProductCard({ product, onSelect, active, text, stockCount }) {
   const [badge, description] = text.productText[product.id]
   const promo = text.promos?.[product.id]
   const avatar = productAvatars[product.group] || { src: '', fallback: product.brand.slice(0, 2).toUpperCase() }
+  const isPopular = product.id === 'chatgpt-plus-ready'
 
   return (
     <button
       type="button"
-      className={`product-card${active ? ' active' : ''}`}
+      className={`product-card${active ? ' active' : ''}${isPopular ? ' popular' : ''}`}
       onClick={() => onSelect(product)}
     >
+      {isPopular ? <span className="popular-ribbon">{text.popularLabel}</span> : null}
       <span className="product-icon" aria-hidden="true">
         {avatar.src ? <img src={avatar.src} alt="" loading="lazy" /> : null}
         <span>{avatar.fallback}</span>
@@ -1178,10 +1254,104 @@ function ProductCard({ product, onSelect, active, text }) {
         {promo ? <p className="product-promo">{promo}</p> : null}
         <p className="product-description">{description}</p>
         <p className="product-guarantee">{text.guarantee}</p>
+        {typeof stockCount === 'number' ? <p className="product-stock">{text.stockLeft(stockCount)}</p> : null}
       </div>
       <strong className="product-price">{formatPrice(product.price)}</strong>
       <span className="product-action">{text.selectPlan}</span>
     </button>
+  )
+}
+
+const storeHeroTitles = {
+  ru: '\u041f\u043e\u0434\u043f\u0438\u0441\u043a\u0438 \u043d\u0430 AI-\u0441\u0435\u0440\u0432\u0438\u0441\u044b',
+  en: 'AI service subscriptions',
+  zh: 'AI \u670d\u52a1\u8ba2\u9605',
+}
+
+function formatRouletteCooldown(milliseconds) {
+  const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000))
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+
+  return [hours, minutes, seconds].map((value) => String(value).padStart(2, '0')).join(':')
+}
+
+function RoulettePanel({ language, spin, canSpin, cooldownRemainingMs, isSpinning, reelPosition, isReelAnimated, error, promoCode, onPromoCodeChange, onSpin }) {
+  const copy = rouletteText[language]
+  const wonPrize = spin?.prize
+  const wonPrizeView = roulettePrizes.find((prize) => prize.id === wonPrize?.id)
+  const prizeHint = wonPrize?.type === 'promo'
+    ? copy.promoHint
+    : wonPrize?.type === 'balance'
+      ? copy.balanceHint
+      : copy.productHint
+
+  return (
+    <section className="roulette-page">
+      <header className="roulette-heading">
+        <span>{copy.lead}</span>
+        <h1>{copy.title}</h1>
+      </header>
+
+      <div className="roulette-stage">
+        <div className="roulette-reel-window">
+          <span className="roulette-pointer" aria-hidden="true" />
+          <div className={`roulette-reel${isReelAnimated ? ' animated' : ''}`} style={{ transform: `translateX(-${56 + reelPosition * 122}px)` }}>
+            {rouletteReelPrizes.map((prize, index) => (
+              <div key={`${prize.id}-${index}`} className={`roulette-reel-prize${['chatgpt-plus', 'cursor-pro', 'claude-pro'].includes(prize.id) ? ' clean-logo-prize' : ''}`}>
+                <span className="roulette-prize-icon">
+                  {prize.image ? <img src={prize.image} alt="" /> : prize.icon}
+                </span>
+                <strong>{prize.labels[language]}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+        <label className="roulette-promo-field">
+          <span>{language === 'ru' ? 'Промокод на прокрутку' : language === 'zh' ? '旋转优惠码' : 'Spin promo code'}</span>
+          <input
+            value={promoCode}
+            onChange={(event) => onPromoCodeChange(event.target.value.toUpperCase())}
+            placeholder={language === 'ru' ? 'Введите промокод' : language === 'zh' ? '输入优惠码' : 'Enter promo code'}
+            autoComplete="off"
+          />
+        </label>
+        <button className="roulette-spin-button" type="button" disabled={(!canSpin && !promoCode.trim()) || isSpinning} onClick={onSpin}>
+          <span>{isSpinning ? copy.spinning : canSpin || promoCode.trim() ? copy.spin : `${copy.used} ${formatRouletteCooldown(cooldownRemainingMs)}`}</span>
+        </button>
+        {!canSpin && cooldownRemainingMs > 0 ? <p className="roulette-cooldown">{copy.cooldown}: <strong>{formatRouletteCooldown(cooldownRemainingMs)}</strong></p> : null}
+      </div>
+      {error ? <p className="roulette-error">{error}</p> : null}
+
+      {wonPrize && !isSpinning ? (
+        <article className="roulette-result">
+          <span>{copy.won}</span>
+          <div>
+            <span className={`roulette-result-icon${['chatgpt-plus', 'cursor-pro', 'claude-pro'].includes(wonPrize?.id) ? ' clean-logo-prize' : ''}`}>
+              {wonPrizeView?.image ? <img src={wonPrizeView.image} alt="" /> : wonPrizeView?.icon}
+            </span>
+            <strong>{wonPrizeView?.labels[language] || wonPrize.productTitle}</strong>
+          </div>
+          {wonPrize.promoCode ? <code>{wonPrize.promoCode}</code> : null}
+          <p>{prizeHint}</p>
+        </article>
+      ) : null}
+
+      <section className="roulette-prizes-list">
+        <h2>{copy.prizes}</h2>
+        <div>
+          {roulettePrizes.map((prize) => (
+            <article key={prize.id}>
+              <span className={`roulette-list-icon${['chatgpt-plus', 'cursor-pro', 'claude-pro'].includes(prize.id) ? ' clean-logo-prize' : ''}`}>
+                {prize.image ? <img src={prize.image} alt="" loading="lazy" /> : prize.icon}
+              </span>
+              <strong>{prize.labels[language]}</strong>
+            </article>
+          ))}
+        </div>
+      </section>
+    </section>
   )
 }
 
@@ -1191,24 +1361,55 @@ function StoreApp() {
   const [activeTab, setActiveTab] = useState('catalog')
   const [activeGroup, setActiveGroup] = useState('Все')
   const [selectedTopUpAmount, setSelectedTopUpAmount] = useState(topupAmounts[0])
+  const [customTopUpAmount, setCustomTopUpAmount] = useState('')
   const [promoCode, setPromoCode] = useState('')
   const [isPromoApplied, setIsPromoApplied] = useState(false)
   const [topUpStatus, setTopUpStatus] = useState('')
   const [productPaymentStatus, setProductPaymentStatus] = useState('')
   const [isProductPaymentOpen, setIsProductPaymentOpen] = useState(false)
   const [isTopUpPanelOpen, setIsTopUpPanelOpen] = useState(false)
+  const [isCouponListOpen, setIsCouponListOpen] = useState(false)
   const [balance, setBalance] = useState(0)
   const [orders, setOrders] = useState([])
+  const [productStockCounts, setProductStockCounts] = useState(() => defaultProductStockCounts)
+  const [rouletteSpin, setRouletteSpin] = useState(null)
+  const [canSpinRoulette, setCanSpinRoulette] = useState(true)
+  const [rouletteNextSpinAt, setRouletteNextSpinAt] = useState(null)
+  const [rouletteCooldownRemainingMs, setRouletteCooldownRemainingMs] = useState(0)
+  const [isRouletteSpinning, setIsRouletteSpinning] = useState(false)
+  const [rouletteReelPosition, setRouletteReelPosition] = useState(2)
+  const [isRouletteReelAnimated, setIsRouletteReelAnimated] = useState(false)
+  const [rouletteError, setRouletteError] = useState('')
+  const [roulettePromoCode, setRoulettePromoCode] = useState('')
+  const [maintenance, setMaintenance] = useState(null)
   const text = translations[language]
-  const promoBonus = promoBonuses[promoCode.trim().toUpperCase()] || 0
-  const topUpPayableAmount = Number((selectedTopUpAmount * (1 - promoBonus / 100)).toFixed(2))
+  const rouletteCopy = rouletteText[language]
+  const availableRouletteCoupons = Array.isArray(rouletteSpin?.coupons)
+    ? rouletteSpin.coupons.filter((coupon) => coupon?.code && !coupon.usedAt)
+    : []
+  const normalizedPromoCode = promoCode.trim().toUpperCase()
+  const selectedRouletteCoupon = availableRouletteCoupons.find((coupon) => coupon.code === normalizedPromoCode)
+  const promoBonus = promoBonuses[normalizedPromoCode] || Number(selectedRouletteCoupon?.discountPercent || 0)
+  const topUpPayableAmount = Number(Math.max(0.1, selectedTopUpAmount * (1 - promoBonus / 100)).toFixed(2))
   const visibleProducts = activeGroup === 'Все'
     ? products
     : products.filter((product) => product.group === activeGroup)
 
   useEffect(() => {
-    window.Telegram?.WebApp?.ready?.()
-    window.Telegram?.WebApp?.expand?.()
+    const telegramApp = window.Telegram?.WebApp
+    const supportsVersion = (version) => telegramApp?.isVersionAtLeast?.(version)
+
+    telegramApp?.ready?.()
+    telegramApp?.expand?.()
+
+    if (supportsVersion('6.1')) {
+      telegramApp?.setHeaderColor?.('#02040a')
+      telegramApp?.setBackgroundColor?.('#02040a')
+    }
+
+    if (supportsVersion('7.10')) {
+      telegramApp?.setBottomBarColor?.('#02040a')
+    }
   }, [])
 
   useEffect(() => {
@@ -1218,6 +1419,37 @@ function StoreApp() {
       document.body.classList.remove('modal-open')
     }
   }, [isTopUpPanelOpen])
+
+  useEffect(() => {
+    if (!rouletteNextSpinAt) {
+      return undefined
+    }
+
+    const updateCooldown = () => {
+      const remaining = Math.max(0, Date.parse(rouletteNextSpinAt) - Date.now())
+      setRouletteCooldownRemainingMs(remaining)
+
+      if (remaining === 0) {
+        setRouletteCooldownRemainingMs(0)
+        setRouletteNextSpinAt(null)
+        setCanSpinRoulette(true)
+      }
+    }
+
+    updateCooldown()
+    const timer = window.setInterval(updateCooldown, 1000)
+    return () => window.clearInterval(timer)
+  }, [rouletteNextSpinAt])
+
+  useEffect(() => {
+    const telegramId = currentTelegramUser()?.id || ''
+    const apiBase = import.meta.env.VITE_API_BASE_URL?.trim() || defaultApiBase
+
+    fetch(`${apiBase}/api/config?telegramId=${encodeURIComponent(telegramId)}`)
+      .then((response) => response.json())
+      .then((config) => setMaintenance(Boolean(config.maintenance)))
+      .catch(() => setMaintenance(true))
+  }, [])
 
   useEffect(() => {
     const telegramId = currentTelegramUser()?.id
@@ -1255,7 +1487,95 @@ function StoreApp() {
       .catch(() => {
         setOrders([])
       })
+
+    fetch(`${apiBase}/api/stocks`)
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error('Stocks request failed')
+        }
+        return response.json()
+      })
+      .then(({ stockCounts = {} }) => {
+        setProductStockCounts((current) => ({ ...current, ...stockCounts }))
+      })
+      .catch(() => {
+        setProductStockCounts((current) => current)
+      })
+
+    fetch(`${apiBase}/api/roulette/${telegramId}`)
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Roulette request failed')
+        return response.json()
+      })
+      .then(({ canSpin = false, spin = null, nextSpinAt = null, cooldownRemainingMs = 0 }) => {
+        setCanSpinRoulette(canSpin)
+        setRouletteSpin(spin)
+        setRouletteNextSpinAt(nextSpinAt)
+        setRouletteCooldownRemainingMs(Number(cooldownRemainingMs) || 0)
+        if (spin?.prize?.id) {
+          const prizeIndex = Math.max(0, roulettePrizes.findIndex((prize) => prize.id === spin.prize.id))
+          setRouletteReelPosition(roulettePrizes.length + prizeIndex)
+        }
+      })
+      .catch(() => {
+        setCanSpinRoulette(false)
+      })
   }, [])
+
+  const handleRouletteSpin = () => {
+    const telegramUser = currentTelegramUser()
+
+    if (!telegramUser?.id) {
+      setRouletteError(rouletteCopy.telegram)
+      return
+    }
+
+    const apiBase = import.meta.env.VITE_API_BASE_URL?.trim() || defaultApiBase
+    setIsRouletteSpinning(true)
+    setRouletteError('')
+
+    fetch(`${apiBase}/api/roulette/spin`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ telegramUser, telegramInitData: currentTelegramInitData(), language, promoCode: roulettePromoCode.trim().toUpperCase() }),
+    })
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({}))
+        if (!response.ok) {
+          if (data.nextSpinAt) {
+            setRouletteNextSpinAt(data.nextSpinAt)
+            setRouletteCooldownRemainingMs(Number(data.cooldownRemainingMs) || 0)
+            setCanSpinRoulette(false)
+          }
+          throw new Error(data.error || 'Roulette request failed')
+        }
+        return data
+      })
+      .then(({ spin, canSpin = false, nextSpinAt = null, cooldownRemainingMs = 0, balance: updatedBalance, order, stockCounts }) => {
+        const prizeIndex = Math.max(0, roulettePrizes.findIndex((prize) => prize.id === spin?.prize?.id))
+        const restingPosition = roulettePrizes.length + prizeIndex
+        const targetPosition = restingPosition + roulettePrizes.length * 5
+        setIsRouletteReelAnimated(true)
+        window.requestAnimationFrame(() => setRouletteReelPosition(targetPosition))
+        setCanSpinRoulette(canSpin)
+        setRouletteNextSpinAt(nextSpinAt)
+        setRouletteCooldownRemainingMs(Number(cooldownRemainingMs) || 0)
+        window.setTimeout(() => {
+          setIsRouletteReelAnimated(false)
+          setRouletteReelPosition(restingPosition)
+          setRouletteSpin(spin)
+          setRoulettePromoCode('')
+          setBalance(Number(updatedBalance) || 0)
+          if (order) setOrders((current) => [order, ...current])
+          if (stockCounts) setProductStockCounts((current) => ({ ...current, ...stockCounts }))
+          setIsRouletteSpinning(false)
+        }, 3600)
+      })
+      .catch((error) => {
+        setRouletteError(error.message || rouletteCopy.error)
+        setIsRouletteSpinning(false)
+      })
+  }
 
   const handleProductSelect = (product) => {
     setSelectedProduct(product)
@@ -1290,10 +1610,21 @@ function StoreApp() {
         }
         return response.json()
       })
-      .then(({ balance: updatedBalance = 0, order }) => {
+      .then(({ balance: updatedBalance = 0, order, stockCounts }) => {
         setBalance(Number(updatedBalance) || 0)
         if (order) {
           setOrders((current) => [order, ...current])
+        }
+        if (stockCounts && typeof stockCounts === 'object') {
+          setProductStockCounts((current) => ({
+            ...current,
+            ...stockCounts,
+          }))
+        } else {
+          setProductStockCounts((current) => ({
+            ...current,
+            [selectedProduct.id]: Math.max(0, Number(current[selectedProduct.id] ?? 0) - 1),
+          }))
         }
         setProductPaymentStatus(text.balancePaymentSuccess)
       })
@@ -1305,6 +1636,12 @@ function StoreApp() {
   const handleWalletTopUp = () => {
     const apiBase = import.meta.env.VITE_API_BASE_URL?.trim() || defaultApiBase
     const normalizedPromoCode = promoCode.trim().toUpperCase()
+    const normalizedCustomAmount = Number(customTopUpAmount)
+
+    if (customTopUpAmount && (!Number.isFinite(normalizedCustomAmount) || normalizedCustomAmount < 1 || normalizedCustomAmount > 100)) {
+      setTopUpStatus(language === 'ru' ? 'Введите сумму от $1 до $100.' : language === 'zh' ? '请输入 $1 到 $100 之间的金额。' : 'Enter an amount from $1 to $100.')
+      return
+    }
 
     if (normalizedPromoCode && !isPromoApplied) {
       setIsPromoApplied(true)
@@ -1351,32 +1688,50 @@ function StoreApp() {
       })
   }
 
+  if (maintenance === null) {
+    return <main className="maintenance-page" />
+  }
+
+  if (maintenance) {
+    return (
+      <main className="maintenance-page">
+        <section>
+          <span>GrozersStore</span>
+          <h1>Сервис на техническом обслуживании</h1>
+          <p>Скоро возобновим работу.</p>
+        </section>
+      </main>
+    )
+  }
+
   return (
     <main className="page-shell">
-      <section className="hero-block">
-        <div>
-          <p className="eyebrow">{text.eyebrow}</p>
-          <h1>{text.title}</h1>
-          <p className="hero-copy">{text.hero}</p>
-        </div>
-        <div className="hero-controls">
-          <button
-            type="button"
-            className="language-toggle store-language-toggle"
-            onClick={() => setLanguage((current) => languages[(languages.indexOf(current) + 1) % languages.length])}
-          >
-            {text.languageLabel}
-          </button>
-          <button
-            type="button"
-            className="balance-pill"
-            onClick={() => setIsTopUpPanelOpen(true)}
-          >
-            <span>{formatPrice(balance)}</span>
-            <strong>+</strong>
-          </button>
-        </div>
-      </section>
+      <div className="hero-controls page-top-controls">
+        <button
+          type="button"
+          className="language-toggle store-language-toggle"
+          onClick={() => setLanguage((current) => languages[(languages.indexOf(current) + 1) % languages.length])}
+        >
+          {text.languageLabel}
+        </button>
+        <button
+          type="button"
+          className="balance-pill"
+          onClick={() => setIsTopUpPanelOpen(true)}
+        >
+          <span>{formatPrice(balance)}</span>
+          <strong>+</strong>
+        </button>
+      </div>
+
+      {activeTab === 'catalog' ? (
+        <section className="hero-block">
+          <div className="hero-content">
+            <h1>{storeHeroTitles[language]}</h1>
+            <p className="hero-copy">{text.hero}</p>
+          </div>
+        </section>
+      ) : null}
 
       {activeTab === 'catalog' ? (
         <>
@@ -1404,6 +1759,7 @@ function StoreApp() {
                   onSelect={handleProductSelect}
                   active={selectedProduct.id === product.id}
                   text={text}
+                  stockCount={productStockCounts[product.id]}
                 />
               ))}
             </div>
@@ -1449,7 +1805,7 @@ function StoreApp() {
             </div>
           ) : null}
         </>
-      ) : (
+      ) : activeTab === 'orders' ? (
         <section className="empty-panel">
           <p className="eyebrow">GrozersStore</p>
           <h2>{text.ordersTitle}</h2>
@@ -1469,6 +1825,23 @@ function StoreApp() {
             <p>{text.ordersText}</p>
           )}
         </section>
+      ) : (
+        <RoulettePanel
+          language={language}
+          spin={rouletteSpin}
+          canSpin={canSpinRoulette}
+          cooldownRemainingMs={rouletteCooldownRemainingMs}
+          isSpinning={isRouletteSpinning}
+          reelPosition={rouletteReelPosition}
+          isReelAnimated={isRouletteReelAnimated}
+          error={rouletteError}
+          promoCode={roulettePromoCode}
+          onPromoCodeChange={(value) => {
+            setRoulettePromoCode(value)
+            setRouletteError('')
+          }}
+          onSpin={handleRouletteSpin}
+        />
       )}
 
       {isTopUpPanelOpen ? (
@@ -1502,6 +1875,7 @@ function StoreApp() {
                   className={selectedTopUpAmount === amount ? 'active' : ''}
                   onClick={() => {
                     setSelectedTopUpAmount(amount)
+                    setCustomTopUpAmount('')
                     setIsPromoApplied(false)
                     setTopUpStatus('')
                   }}
@@ -1510,6 +1884,65 @@ function StoreApp() {
                 </button>
               ))}
             </div>
+            <label className="custom-topup-field">
+              <span>{language === 'ru' ? 'Своя сумма' : language === 'zh' ? '自定义金额' : 'Custom amount'}</span>
+              <div>
+                <b>$</b>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="0.01"
+                  inputMode="decimal"
+                  value={customTopUpAmount}
+                  placeholder="1.00"
+                  onChange={(event) => {
+                    const value = event.target.value
+                    setCustomTopUpAmount(value)
+                    const amount = Number(value)
+                    if (!value) setSelectedTopUpAmount(topupAmounts[0])
+                    else if (Number.isFinite(amount) && amount >= 1 && amount <= 100) setSelectedTopUpAmount(amount)
+                    setIsPromoApplied(false)
+                    setTopUpStatus('')
+                  }}
+                />
+              </div>
+              <small>{language === 'ru' ? 'Минимум $1' : language === 'zh' ? '最低 $1' : 'Minimum $1'}</small>
+            </label>
+            <button type="button" className="coupon-list-toggle" onClick={() => setIsCouponListOpen((current) => !current)}>
+              <span>{language === 'ru' ? 'Применить купон' : language === 'zh' ? '使用优惠券' : 'Apply coupon'}</span>
+              <b>{isCouponListOpen ? '−' : '+'}</b>
+            </button>
+            {isCouponListOpen ? (
+              <div className="coupon-list">
+                {availableRouletteCoupons.length ? (
+                  availableRouletteCoupons.map((coupon) => {
+                    const isSelected = normalizedPromoCode === coupon.code
+
+                    return (
+                      <button
+                        key={coupon.code}
+                        type="button"
+                        className={`roulette-coupon${isSelected ? ' active' : ''}`}
+                        onClick={() => {
+                          setPromoCode(isSelected ? '' : coupon.code)
+                          setIsPromoApplied(!isSelected)
+                          setTopUpStatus('')
+                        }}
+                      >
+                        <span>
+                          <strong>{Number(coupon.discountPercent) || 20}%</strong>
+                          <small>{language === 'ru' ? 'Купон на одно пополнение' : language === 'zh' ? '单次充值优惠券' : 'Single top-up coupon'}</small>
+                        </span>
+                        <b>{isSelected ? (language === 'ru' ? 'Выбран' : language === 'zh' ? '已选择' : 'Selected') : (language === 'ru' ? 'Выбрать' : language === 'zh' ? '选择' : 'Select')}</b>
+                      </button>
+                    )
+                  })
+                ) : (
+                  <p>{language === 'ru' ? 'Нет доступных купонов' : language === 'zh' ? '暂无可用优惠券' : 'No coupons available'}</p>
+                )}
+              </div>
+            ) : null}
             <label className="promo-code-field">
               <span>{text.promoCodeLabel}</span>
               <input
@@ -1532,7 +1965,7 @@ function StoreApp() {
       ) : null}
 
       <nav className="bottom-tabs" aria-label="Mini app tabs">
-        {Object.entries(text.tabs).map(([tab, label]) => (
+        {[...Object.entries(text.tabs), ['roulette', rouletteCopy.tab]].map(([tab, label]) => (
           <button
             key={tab}
             type="button"
@@ -1548,8 +1981,29 @@ function StoreApp() {
 }
 
 function App() {
+  const [isLaunching, setIsLaunching] = useState(true)
+  const [launchProgress, setLaunchProgress] = useState(0)
+  const [isRevealing, setIsRevealing] = useState(false)
+
   useEffect(() => {
-    document.title = 'GrozersStore'
+      document.title = ' '
+      const startedAt = performance.now()
+      const progressTimer = window.setInterval(() => {
+        const nextProgress = Math.min(100, Math.round(((performance.now() - startedAt) / 2700) * 100))
+        setLaunchProgress(nextProgress)
+      }, 30)
+      const launchTimer = window.setTimeout(() => {
+        setLaunchProgress(100)
+        setIsLaunching(false)
+        setIsRevealing(true)
+      }, 3500)
+      const revealTimer = window.setTimeout(() => setIsRevealing(false), 3800)
+
+    return () => {
+      window.clearInterval(progressTimer)
+      window.clearTimeout(launchTimer)
+      window.clearTimeout(revealTimer)
+    }
   }, [])
 
   if (window.location.pathname === '/activate') {
@@ -1560,7 +2014,11 @@ function App() {
     return <WalletPaymentPage />
   }
 
-  return <StoreApp />
+  if (isLaunching) {
+    return <LaunchSplash progress={launchProgress} />
+  }
+
+  return <div className={isRevealing ? 'app-reveal is-blurred' : 'app-reveal'}><StoreApp /></div>
 }
 
 export default App

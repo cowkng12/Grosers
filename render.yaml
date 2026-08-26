@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: grozersstore-miniapp
+    name: aivorahub-miniapp
     env: node
     plan: free
     buildCommand: npm install && npm run build
@@ -17,7 +17,7 @@ services:
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_BOT_USERNAME
-        value: "@GrozersStore_bot"
+        value: "@AivoraHub_bot"
       - key: ADMIN_CHAT_ID
         sync: false
       - key: SELLER_URL
@@ -25,9 +25,9 @@ services:
       - key: SUPPORT_BOT_URL
         sync: false
       - key: REQUIRED_CHANNEL_USERNAME
-        value: "@GrozersStore"
+        value: "@AivoraaHub"
       - key: REQUIRED_CHANNEL_URL
-        value: https://t.me/GrozersStore
+        value: https://t.me/AivoraaHub
       - key: CRYPTO_PAY_TOKEN
         sync: false
       - key: CRYPTO_PAY_API_URL
@@ -47,6 +47,6 @@ services:
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
       - key: SUPABASE_STORE_KEY
-        value: grozersstore
+        value: aivorahub
       - key: ACCOUNT_DELIVERY_THRESHOLD
         value: "0.1"
