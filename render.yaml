@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: grozersstore-miniapp
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WEB_APP_URL
+        sync: false
+      - key: ACTIVATION_SITE_URL
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_USERNAME
+        value: "@GrozersStore_bot"
+      - key: ADMIN_CHAT_ID
+        sync: false
+      - key: SELLER_URL
+        sync: false
+      - key: SUPPORT_BOT_URL
+        sync: false
+      - key: REQUIRED_CHANNEL_USERNAME
+        value: "@GrozersStore"
+      - key: REQUIRED_CHANNEL_URL
+        value: https://t.me/GrozersStore
+      - key: CRYPTO_PAY_TOKEN
+        sync: false
+      - key: CRYPTO_PAY_API_URL
+        value: https://pay.crypt.bot/api
+      - key: CRYPTO_PAY_ASSET
+        value: USDT
+      - key: TON_USD_RATE
+        value: "1.31"
+      - key: TON_USD_RATE_API_URL
+        value: https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd
+      - key: WALLET_PAY_TON_ADDRESS
+        value: UQC8r4dra0Gy1VlxktwRnsTRTcPoKNoqK4xQH94P3SuRRYWC
+      - key: WALLET_PAY_TRC20_ADDRESS
+        value: TJDqXkQx5nqFhq7RNtySUMCYTZ5Hk96o3G
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_STORE_KEY
+        value: grozersstore
+      - key: ACCOUNT_DELIVERY_THRESHOLD
+        value: "0.1"
