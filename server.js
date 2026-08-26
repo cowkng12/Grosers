@@ -15,7 +15,6 @@ const webAppUrl = process.env.WEB_APP_URL?.trim() || 'http://localhost:5173'
 const sellerUrl = process.env.SELLER_URL?.trim() || 'https://t.me/metifrysell'
 const requiredChannelUsername = process.env.REQUIRED_CHANNEL_USERNAME?.trim() || '@GrozersStore'
 const requiredChannelUrl = process.env.REQUIRED_CHANNEL_URL?.trim() || 'https://t.me/GrozersStore'
-const skipChannelCheck = process.env.SKIP_CHANNEL_CHECK === 'true'
 const cryptoPayToken = process.env.CRYPTO_PAY_TOKEN?.trim()
 const cryptoPayApiUrl = process.env.CRYPTO_PAY_API_URL?.trim() || 'https://pay.crypt.bot/api'
 const cryptoPayAsset = process.env.CRYPTO_PAY_ASSET?.trim() || 'USDT'
@@ -572,10 +571,6 @@ async function getCryptoInvoice(invoiceId) {
 }
 
 async function isSubscribedToRequiredChannel(telegramId) {
-  if (skipChannelCheck) {
-    return true
-  }
-
   if (!bot || !telegramId) {
     return false
   }
@@ -1293,13 +1288,13 @@ if (botToken) {
       promotions: [
         '⭐ Акции',
         '',
-        'В честь открытия GrozersStore 2 аккаунта Pro стоят $18 вместо двух по $20.',
+        'В честь открытия GrozersStore Store 2 аккаунта Pro стоят $18 вместо двух по $20.',
         '',
         'Kimi уже добавлен в каталог: Kimi K2, Kimi Pro и Kimi API Pack.',
       ].join('\n'),
       support: '💬 Поддержка\n\nНапишите ваш вопрос или проблему следующим сообщением. Мы передадим обращение оператору.',
       supportReceived: 'Спасибо. Ваше обращение отправлено в поддержку.',
-      about: '🔷 О проекте\n\nGrozersStore помогает быстро покупать подписки на популярные AI-сервисы.',
+      about: '🔷 О проекте\n\nGrozersStore Store помогает быстро покупать подписки на популярные AI-сервисы.',
       balance: (amount) => `💳 Баланс\n\nВаш текущий баланс: $${amount}`,
       subscribeRequired: [
         'Подпишитесь на канал GrozersStore, чтобы открыть каталог.',
@@ -1356,7 +1351,7 @@ if (botToken) {
       ].join('\n'),
       support: '💬 Support\n\nSend your question or problem in the next message. We will forward it to an operator.',
       supportReceived: 'Thank you. Your request has been sent to support.',
-      about: '🔷 About\n\nGrozersStore helps you buy subscriptions for popular AI services quickly.',
+      about: '🔷 About\n\nGrozersStore Store helps you buy subscriptions for popular AI services quickly.',
       balance: (amount) => `💳 Balance\n\nYour current balance: $${amount}`,
       subscribeRequired: [
         'Subscribe to the GrozersStore channel to open the catalog.',
@@ -1413,7 +1408,7 @@ if (botToken) {
       ].join('\n'),
       support: '💬 支持\n\n请在下一条消息中发送你的问题。我们会转交给客服。',
       supportReceived: '谢谢。你的请求已发送给支持团队。',
-      about: '🔷 关于项目\n\nGrozersStore 帮助你快速购买热门 AI 服务订阅。',
+      about: '🔷 关于项目\n\nGrozersStore Store 帮助你快速购买热门 AI 服务订阅。',
       balance: (amount) => `💳 余额\n\n当前余额：$${amount}`,
       subscribeRequired: [
         '请先订阅 GrozersStore 频道，然后打开目录。',
@@ -1636,7 +1631,7 @@ if (botToken) {
     }
 
     await context.reply([
-      'Админ-команды GrozersStore:',
+      'Админ-команды GrozersStore Store:',
       '',
       '/broadcastpromos - разослать промокоды всем пользователям бота',
       '/refstats - статистика, кто сколько людей пригласил',
@@ -1768,7 +1763,7 @@ if (botToken) {
       await bot.telegram.sendMessage(
         adminChatId,
         [
-          'Новое обращение в поддержку GrozersStore',
+          'Новое обращение в поддержку GrozersStore Store',
           `Пользователь: ${from.username ? `@${from.username}` : `${from.first_name || ''} ${from.last_name || ''}`.trim() || from.id}`,
           `ID: ${from.id}`,
           '',
