@@ -1,20 +1,20 @@
 :root {
-  color-scheme: dark;
-  --bg: #0a1f0a;
-  --bg-soft: #0d240d;
-  --panel: #102810;
-  --panel-strong: #143814;
-  --panel-muted: #1a4a1a;
-  --line: rgba(144, 238, 144, 0.12);
-  --line-strong: rgba(144, 238, 144, 0.34);
-  --text: #f0fff0;
-  --muted: #b8e0b8;
-  --subtle: #7eb87e;
-  --blue: #1a4a1a;
-  --blue-bright: #2d5f2d;
-  --blue-deep: #90ee90;
-  --success: #90ee90;
-  --shadow: 0 22px 60px rgba(10, 50, 10, 0.62);
+  color-scheme: light;
+  --bg: #ffffff;
+  --bg-soft: #f8f9fa;
+  --panel: #ffffff;
+  --panel-strong: #f5f5f5;
+  --panel-muted: #e9ecef;
+  --line: rgba(176, 235, 171, 0.3);
+  --line-strong: rgba(176, 235, 171, 0.6);
+  --text: #1a1a1a;
+  --muted: #6c757d;
+  --subtle: #adb5bd;
+  --blue: #b0ebab;
+  --blue-bright: #b0ebab;
+  --blue-deep: #b0ebab;
+  --success: #b0ebab;
+  --shadow: 0 22px 60px rgba(0, 0, 0, 0.08);
 }
 
 .page-shell {
@@ -30,10 +30,7 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background:
-    radial-gradient(circle at top left, rgba(144, 238, 144, 0.1), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(144, 238, 144, 0.08), transparent 28%),
-    linear-gradient(180deg, #0a1f0a 0%, #0d240d 56%, #102810 100%);
+  background: #ffffff;
   color: var(--text);
 }
 
@@ -43,7 +40,7 @@
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 32px;
-  background: rgba(16, 40, 16, 0.96);
+  background: rgba(255, 255, 255, 0.98);
   box-shadow: var(--shadow);
 }
 
@@ -372,14 +369,14 @@
 .wallet-pay-card button,
 .product-balance-button,
 .topup-pay-button {
-  border: 1px solid rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(176, 235, 171, 0.5);
   border-radius: 8px;
   padding: 15px 18px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(210, 210, 210, 0.72));
-  color: #0d240d;
+  background: #b0ebab;
+  color: #1a1a1a;
   font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 16px 34px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(14px);
   transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
 }
@@ -573,7 +570,7 @@
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 8px 10px;
-  background: rgba(16, 40, 16, 0.96);
+  background: rgba(255, 255, 255, 0.98);
   color: var(--blue-deep);
   font-size: 12px;
   font-weight: 800;
@@ -602,7 +599,7 @@ body.modal-open {
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 8px 10px 8px 12px;
-  background: rgba(16, 40, 16, 0.96);
+  background: rgba(255, 255, 255, 0.98);
   color: var(--text);
   font-size: 13px;
   font-weight: 900;
@@ -630,7 +627,7 @@ body.modal-open {
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 54px 22px 20px;
-  background: linear-gradient(135deg, rgba(34, 139, 34, 0.98) 0%, rgba(50, 205, 50, 0.98) 62%, rgba(60, 179, 113, 0.94) 100%);
+  background: #b0ebab;
   box-shadow: var(--shadow);
 }
 
@@ -752,7 +749,7 @@ body.modal-open {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 16px 18px;
-  background: rgba(144, 238, 144, 0.2);
+  background: #ffffff;
   color: inherit;
   text-align: left;
   cursor: pointer;
@@ -771,7 +768,7 @@ body.modal-open {
   border: 1px solid rgba(255, 255, 255, 0.82);
   border-radius: 999px;
   padding: 6px 10px;
-  background: linear-gradient(135deg, #90ee90, #7fcd7f);
+  background: #b0ebab;
   color: #0d240d;
   font-size: 11px;
   font-weight: 900;
@@ -783,7 +780,7 @@ body.modal-open {
 .product-card.active {
   transform: translateY(-2px);
   border-color: var(--line-strong);
-  background: linear-gradient(135deg, #0d2e0d 0%, #1a4a1a 54%, #2d5f2d 100%);
+  background: #b0ebab;
 }
 
 .product-icon {
@@ -894,13 +891,13 @@ body.modal-open {
   justify-self: end;
   border-radius: 8px;
   padding: 10px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.36);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(210, 210, 210, 0.68));
-  color: #0d240d;
+  border: 1px solid rgba(176, 235, 171, 0.5);
+  background: #b0ebab;
+  color: #1a1a1a;
   font-size: 14px;
   font-weight: 900;
   white-space: nowrap;
-  box-shadow: 0 12px 30px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .product-payment-overlay {
@@ -1650,7 +1647,7 @@ body.modal-open {
   gap: 0;
   padding: 0 0 env(safe-area-inset-bottom);
   border-top: 1px solid var(--line);
-  background: rgba(16, 40, 16, 0.96);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(16px);
 }
 
