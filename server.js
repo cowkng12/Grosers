@@ -571,16 +571,13 @@ async function getCryptoInvoice(invoiceId) {
 }
 
 async function isSubscribedToRequiredChannel(telegramId) {
-  // Временно отключена проверка канала
-  return true
+  if (!bot || !telegramId) {
+    return false
+  }
 
-  // if (!bot || !telegramId) {
-  //   return false
-  // }
+  const member = await bot.telegram.getChatMember(requiredChannelUsername, telegramId)
 
-  // const member = await bot.telegram.getChatMember(requiredChannelUsername, telegramId)
-
-  // return ['creator', 'administrator', 'member'].includes(member.status)
+  return ['creator', 'administrator', 'member'].includes(member.status)
 }
 
 async function creditTopup(topup) {
