@@ -390,7 +390,6 @@
 .topup-pay-button:hover,
 .product-action:hover,
 .group-tab:hover,
-.bottom-tabs button:hover,
 .topup-grid button:hover {
   transform: translateY(-1px);
   opacity: 0.92;
@@ -1045,8 +1044,7 @@ body.modal-open {
   gap: 10px;
 }
 
-.topup-grid button,
-.bottom-tabs button {
+.topup-grid button {
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.08);
@@ -1648,22 +1646,44 @@ body.modal-open {
   z-index: 20;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  gap: 0;
+  padding: 0 0 env(safe-area-inset-bottom);
   border-top: 1px solid var(--line);
   background: rgba(16, 40, 16, 0.96);
   backdrop-filter: blur(16px);
 }
 
 .bottom-tabs button {
-  padding: 12px 10px;
+  position: relative;
+  padding: 14px 10px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
   color: var(--muted);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.bottom-tabs button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 0.2s ease;
 }
 
 .bottom-tabs button.active {
-  border-color: rgba(255, 255, 255, 0.62);
-  background: rgba(255, 255, 255, 0.9);
-  color: #050505;
+  border: none;
+  background: transparent;
+  color: var(--success);
+}
+
+.bottom-tabs button.active::after {
+  background: var(--success);
 }
 
 @media (max-width: 900px) {
