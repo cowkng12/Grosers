@@ -1825,24 +1825,7 @@ function StoreApp() {
             <p>{text.ordersText}</p>
           )}
         </section>
-      ) : (
-        <RoulettePanel
-          language={language}
-          spin={rouletteSpin}
-          canSpin={canSpinRoulette}
-          cooldownRemainingMs={rouletteCooldownRemainingMs}
-          isSpinning={isRouletteSpinning}
-          reelPosition={rouletteReelPosition}
-          isReelAnimated={isRouletteReelAnimated}
-          error={rouletteError}
-          promoCode={roulettePromoCode}
-          onPromoCodeChange={(value) => {
-            setRoulettePromoCode(value)
-            setRouletteError('')
-          }}
-          onSpin={handleRouletteSpin}
-        />
-      )}
+      ) : null}
 
       {isTopUpPanelOpen ? (
         <div
@@ -1965,7 +1948,7 @@ function StoreApp() {
       ) : null}
 
       <nav className="bottom-tabs" aria-label="Mini app tabs">
-        {[...Object.entries(text.tabs), ['roulette', rouletteCopy.tab]].map(([tab, label]) => (
+        {Object.entries(text.tabs).map(([tab, label]) => (
           <button
             key={tab}
             type="button"
