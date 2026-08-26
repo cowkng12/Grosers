@@ -630,7 +630,7 @@ body.modal-open {
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 54px 22px 20px;
-  background: linear-gradient(135deg, rgba(34, 139, 34, 0.98) 0%, rgba(50, 205, 50, 0.98) 62%, rgba(60, 179, 113, 0.94) 100%);
+  background: linear-gradient(135deg, rgba(199, 223, 167, 0.98) 0%, rgba(220, 232, 195, 0.98) 62%, rgba(199, 223, 167, 0.94) 100%);
   box-shadow: var(--shadow);
 }
 
@@ -691,7 +691,7 @@ body.modal-open {
 .group-tabs {
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 0;
   max-width: 100%;
   min-width: 0;
   padding: 0 18px 10px;
@@ -718,22 +718,24 @@ body.modal-open {
 }
 
 .group-tab {
-  flex: 0 0 auto;
+  flex: 1 1 0;
   scroll-snap-align: start;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(199, 223, 167, 0.3);
+  border-radius: 0;
+  padding: 12px 14px;
+  background: #DCE8C3;
+  color: rgba(10, 31, 10, 0.8);
   cursor: pointer;
   backdrop-filter: blur(12px);
+  font-weight: 600;
 }
 
 .group-tab.active {
-  border-color: rgba(255, 255, 255, 0.66);
-  background: rgba(255, 255, 255, 0.88);
-  color: #0d240d;
+  border-color: rgba(199, 223, 167, 0.8);
+  background: #C7DFA7;
+  color: rgba(10, 31, 10, 0.95);
   font-weight: 800;
+  border-bottom: 3px solid rgba(10, 31, 10, 0.6);
 }
 
 .catalog-grid {
