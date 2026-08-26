@@ -15,6 +15,7 @@ const webAppUrl = process.env.WEB_APP_URL?.trim() || 'http://localhost:5173'
 const sellerUrl = process.env.SELLER_URL?.trim() || 'https://t.me/metifrysell'
 const requiredChannelUsername = process.env.REQUIRED_CHANNEL_USERNAME?.trim() || '@GrozersStore'
 const requiredChannelUrl = process.env.REQUIRED_CHANNEL_URL?.trim() || 'https://t.me/GrozersStore'
+const skipChannelCheck = process.env.SKIP_CHANNEL_CHECK === 'true'
 const cryptoPayToken = process.env.CRYPTO_PAY_TOKEN?.trim()
 const cryptoPayApiUrl = process.env.CRYPTO_PAY_API_URL?.trim() || 'https://pay.crypt.bot/api'
 const cryptoPayAsset = process.env.CRYPTO_PAY_ASSET?.trim() || 'USDT'
@@ -571,6 +572,10 @@ async function getCryptoInvoice(invoiceId) {
 }
 
 async function isSubscribedToRequiredChannel(telegramId) {
+  if (skipChannelCheck) {
+    return true
+  }
+
   if (!bot || !telegramId) {
     return false
   }
