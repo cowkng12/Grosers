@@ -1,25 +1,21 @@
 {
-  "projectName": "AivoraHub",
+  "projectName": "GrozersStore",
   "envFile": "my-bot.env",
-  "folderName": "AivoraHub-New",
-  "packageName": "aivorahub-miniapp",
-  "storeKey": "aivorahub",
-  "promoPrefix": "AIVORA",
+  "folderName": "GrozersStore-New",
+  "packageName": "grozersstore-miniapp",
+  "storeKey": "grozersstore",
+  "promoPrefix": "GROZERS",
   "sellerUrl": "https://t.me/metifrysell",
-  "telegram": {
-    "channelUsername": "@AivoraaHub",
-    "channelUrl": "https://t.me/AivoraaHub"
-  },
   "github": {
     "owner": "cowkng12",
-    "repo": "new-aivorahub-miniapp",
+    "repo": "new-grozersstore-miniapp",
     "createRepo": false,
     "push": false,
     "visibility": "public"
   },
   "render": {
-    "serviceName": "new-aivorahub-miniapp",
-    "webAppUrl": "https://new-aivorahub-miniapp.onrender.com",
+    "serviceName": "new-grozersstore-miniapp",
+    "webAppUrl": "https://new-grozersstore-miniapp.onrender.com",
     "region": "virginia",
     "plan": "free",
     "api": {
@@ -45,6 +41,6 @@
   },
   "git": {
     "init": true,
-    "commitMessage": "Prepare AivoraHub mini app"
+    "commitMessage": "Prepare GrozersStore mini app"
   }
 }

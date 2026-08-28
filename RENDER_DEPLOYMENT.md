@@ -68,8 +68,6 @@ SUPABASE_SERVICE_ROLE_KEY=<ваш_service_role_key>
 
 - `NODE_ENV=production`
 - `TELEGRAM_BOT_USERNAME=@GrozersStore_bot`
-- `REQUIRED_CHANNEL_USERNAME=@GrozersStore`
-- `REQUIRED_CHANNEL_URL=https://t.me/GrozersStore`
 - `CRYPTO_PAY_API_URL=https://pay.crypt.bot/api`
 - `CRYPTO_PAY_ASSET=USDT`
 - `TON_USD_RATE=1.31`

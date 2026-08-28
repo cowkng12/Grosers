@@ -7,11 +7,11 @@
 
 ### 1. Основные файлы
 - **server.js** (1875 строк) - полностью скопирован и заменены все упоминания:
-  - NervaHub → GrozersStore
-  - nervahub → grozersstore
-  - NERVA → GROZERS
-  - Nerva → Grozers
-  - nerva → grozers
+  - GrozersStore → GrozersStore
+  - grozersstore → grozersstore
+  - GROZERS → GROZERS
+  - Grozers → Grozers
+  - grozers → grozers
 
 ### 2. Frontend файлы
 - **src/App.jsx** (1566 строк) - полный функционал с заменами названий
@@ -32,19 +32,19 @@
 ## Изменённые значения
 
 ### Промокоды
-- NERVA50 → GROZERS50
-- NERVA20 → GROZERS20
+- GROZERS50 → GROZERS50
+- GROZERS20 → GROZERS20
 
 ### Email префиксы
-- nerva → grozers (в generateCredentialEmail)
+- grozers → grozers (в generateCredentialEmail)
 
 ### Текст ботов
-- Все упоминания NervaHub заменены на GrozersStore
-- Канал: @NervaHub → @GrozersStore
-- Supabase store key: nervahub → grozersstore
+- Все упоминания GrozersStore заменены на GrozersStore
+- Канал: @GrozersStore → @GrozersStore
+- Supabase store key: grozersstore → grozersstore
 
 ## Проверки
-✅ Нет оставшихся упоминаний "nerva", "NervaHub"
+✅ Нет оставшихся упоминаний "grozers", "GrozersStore"
 ✅ Промокоды обновлены в server.js и App.jsx
 ✅ BrandLogo компонент обновлен
 ✅ document.title = 'GrozersStore'

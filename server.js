@@ -1,7 +1,6 @@
 import 'dotenv/config'
 import cors from 'cors'
 import express from 'express'
-import { createHmac, timingSafeEqual } from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -11,74 +10,28 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const port = Number(process.env.PORT || 3001)
 const botToken = process.env.TELEGRAM_BOT_TOKEN?.trim()
-const botUsername = process.env.TELEGRAM_BOT_USERNAME?.trim() || '@GrozersStore_bot'
 const adminChatId = process.env.ADMIN_CHAT_ID?.trim()
 const webAppUrl = process.env.WEB_APP_URL?.trim() || 'http://localhost:5173'
 const sellerUrl = process.env.SELLER_URL?.trim() || 'https://t.me/metifrysell'
-const supportBotUsername = process.env.SUPPORT_BOT_USERNAME?.trim() || '@GrozersStoreSupport_bot'
-const supportBotUrl = process.env.SUPPORT_BOT_URL?.trim() || 'https://t.me/GrozersStoreSupport_bot'
-const requiredChannelUsername = process.env.REQUIRED_CHANNEL_USERNAME?.trim() || '@GrozersStore'
-const requiredChannelId = process.env.REQUIRED_CHANNEL_ID?.trim()
-const requiredChannelChat = requiredChannelUsername || requiredChannelId
-const requiredChannelUrl = process.env.REQUIRED_CHANNEL_URL?.trim() || 'https://t.me/GrozersStore'
-const skipChannelCheck = process.env.SKIP_CHANNEL_CHECK === 'true'
 const cryptoPayToken = process.env.CRYPTO_PAY_TOKEN?.trim()
 const cryptoPayApiUrl = process.env.CRYPTO_PAY_API_URL?.trim() || 'https://pay.crypt.bot/api'
 const cryptoPayAsset = process.env.CRYPTO_PAY_ASSET?.trim() || 'USDT'
-const tonUsdRateFallback = Number(process.env.TON_USD_RATE || 1.31)
-const tonUsdRateApiUrl = process.env.TON_USD_RATE_API_URL?.trim() || 'https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd'
-let tonUsdRateCache = { value: 0, updatedAt: 0 }
 const walletPayOptions = [
   {
     id: 'ton',
     label: 'TON',
     network: 'TON',
-    asset: 'TON / GRAM',
-    address: process.env.WALLET_PAY_TON_ADDRESS?.trim() || 'UQC8r4dra0Gy1VlxktwRnsTRTcPoKNoqK4xQH94P3SuRRYWC',
+    asset: 'USDT TON / GRAM',
+    address: process.env.WALLET_PAY_TON_ADDRESS?.trim() || 'UQDpGKcwWkYJmRuamTSZhb7Q0gnqWiCzZ-LDlmihIGE34L3f',
   },
   {
     id: 'trc20',
-    label: 'USDT TRC20',
+    label: 'TRC20',
     network: 'TRC20',
     asset: 'USDT',
-    address: process.env.WALLET_PAY_TRC20_ADDRESS?.trim() || 'TJDqXkQx5nqFhq7RNtySUMCYTZ5Hk96o3G',
+    address: process.env.WALLET_PAY_TRC20_ADDRESS?.trim() || 'TJKWXgisQTVtyPXy6Ns8BfbBCnFSQKmoPt',
   },
 ].filter((option) => option.address)
-
-async function currentTonUsdRate() {
-  const fallbackRate = Number.isFinite(tonUsdRateFallback) && tonUsdRateFallback > 0 ? tonUsdRateFallback : 1.31
-  const now = Date.now()
-
-  if (tonUsdRateCache.value && now - tonUsdRateCache.updatedAt < 5 * 60 * 1000) {
-    return tonUsdRateCache.value
-  }
-
-  try {
-    const response = await fetch(tonUsdRateApiUrl)
-    const data = await response.json()
-    const rate = Number(data?.['the-open-network']?.usd)
-
-    if (response.ok && Number.isFinite(rate) && rate > 0) {
-      tonUsdRateCache = { value: rate, updatedAt: now }
-      return rate
-    }
-  } catch (error) {
-    console.error('TON/USD rate request failed', error?.message || error)
-  }
-
-  return fallbackRate
-}
-
-async function walletPayableAmountUsdToAsset(amountUsd, walletPayOption, uniquePart) {
-  const normalizedAmount = Number(amountUsd) || 0
-
-  if (walletPayOption?.id === 'ton') {
-    const rate = await currentTonUsdRate()
-    return Number((normalizedAmount / rate + uniquePart / 100000).toFixed(4))
-  }
-
-  return Number((normalizedAmount + uniquePart / 10000).toFixed(4))
-}
 const storeFilePath = process.env.STORE_FILE_PATH?.trim() || path.join(__dirname, 'data', 'store.json')
 const supabaseUrl = process.env.SUPABASE_URL?.trim()
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
@@ -88,11 +41,9 @@ const activationSiteUrl = process.env.ACTIVATION_SITE_URL?.trim() || `${webAppUr
 const keepAliveUrl = process.env.KEEP_ALIVE_URL?.trim() || webAppUrl
 const keepAliveEnabled = process.env.KEEP_ALIVE_ENABLED !== 'false'
 const keepAliveIntervalMs = Number(process.env.KEEP_ALIVE_INTERVAL_MS || 5 * 60 * 1000)
-const maintenanceMode = process.env.MAINTENANCE_MODE !== 'false'
-const rouletteCooldownMs = 24 * 60 * 60 * 1000
 
 const products = {
-  'chatgpt-plus-ready': { title: 'ChatGPT Plus Ready Account', price: 2 },
+  'chatgpt-plus-ready': { title: 'ChatGPT Plus Ready Account', price: 1.5 },
   'chatgpt-go': { title: 'ChatGPT Go', price: 2.5 },
   'chatgpt-pro-ready': { title: 'ChatGPT Pro Ready Account', price: 60 },
   'chatgpt-business-seat': { title: 'ChatGPT Business Seat', price: 15 },
@@ -156,75 +107,11 @@ const promoCodes = {
   GROZERS50: { code: 'GROZERS50', discountPercent: 50, disabled: true },
   REF50: { code: 'REF50', discountPercent: 50, maxRedemptions: 50, disabled: true },
   KIMI50: { code: 'KIMI50', discountPercent: 50, disabled: true },
-  SUB200: { code: 'SUB200', discountPercent: 25, maxRedemptions: 75, disabled: true },
-  SUBS200: { code: 'SUBS200', discountPercent: 25, maxRedemptions: 75, disabled: true },
-  GROZERS20: { code: 'GROZERS20', discountPercent: 20, maxRedemptions: 30 },
-  '100SUBS': { code: '100SUBS', discountPercent: 30, maxRedemptions: 30 },
-  KIMI15: { code: 'KIMI15', discountPercent: 15, disabled: true },
-  START10: { code: 'START10', discountPercent: 10, disabled: true },
-}
-
-const roulettePrizes = [
-  { id: 'balance-025', type: 'balance', amount: 0.25, weight: 31.75 },
-  { id: 'balance-050', type: 'balance', amount: 0.5, weight: 24 },
-  { id: 'promo-20', type: 'promo', discountPercent: 20, weight: 22 },
-  { id: 'balance-100', type: 'balance', amount: 1, weight: 20 },
-  { id: 'chatgpt-plus', type: 'product', productId: 'chatgpt-plus-ready', weight: 2 },
-  { id: 'cursor-pro', type: 'product', productId: 'cursor-pro', weight: 0.2 },
-  { id: 'claude-pro', type: 'product', productId: 'claude-pro', weight: 0.05 },
-]
-const rouletteSpinPromoCodes = {
-  CLAUDE100: { code: 'CLAUDE100', prizeId: 'claude-pro', adminOnly: true, unlimited: true },
-  CURSOR100: { code: 'CURSOR100', prizeId: 'cursor-pro', adminOnly: true, unlimited: true },
-  CHATGPT100: { code: 'CHATGPT100', prizeId: 'chatgpt-plus', adminOnly: true, unlimited: true },
-}
-
-const stockCountsVersion = 5
-
-function clampStockCount(value) {
-  return Math.max(4, Math.min(48, value))
-}
-
-function stableHash(input) {
-  return String(input).split('').reduce((hash, char) => ((hash << 5) - hash + char.charCodeAt(0)) | 0, 0)
-}
-
-function defaultStockForProduct(productId, product) {
-  if (productId === 'chatgpt-plus-ready') return 48
-  if (productId === 'chatgpt-go') return 15
-  if (productId === 'chatgpt-business-seat') return 12
-  if (productId === 'chatgpt-pro-ready') return 8
-
-  const price = Number(product?.price) || 0
-  const pricePressure = Math.round(price * 0.35)
-  const jitter = (Math.abs(stableHash(productId)) % 3) - 1
-
-  return clampStockCount(25 - pricePressure + jitter)
-}
-
-function defaultProductStockCounts() {
-  const counts = {}
-
-  Object.entries(products).forEach(([productId, product]) => {
-    counts[productId] = defaultStockForProduct(productId, product)
-  })
-
-  return counts
-}
-
-function normalizeStockCounts(rawStore = {}) {
-  const defaults = defaultProductStockCounts()
-  const storedCounts = rawStore.stockCounts && typeof rawStore.stockCounts === 'object' ? rawStore.stockCounts : {}
-
-  if (rawStore.stockCountsVersion === stockCountsVersion) {
-    return { ...defaults, ...storedCounts }
-  }
-
-  return {
-    ...defaults,
-    ...storedCounts,
-    'chatgpt-plus-ready': 48,
-  }
+  SUB200: { code: 'SUB200', discountPercent: 25, maxRedemptions: 75 },
+  SUBS200: { code: 'SUBS200', discountPercent: 25, maxRedemptions: 75 },
+  GROZERS20: { code: 'GROZERS20', discountPercent: 20 },
+  KIMI15: { code: 'KIMI15', discountPercent: 15 },
+  START10: { code: 'START10', discountPercent: 10 },
 }
 
 const store = await loadStore()
@@ -236,9 +123,7 @@ const refbotUsers = new Set(store.refbotUsers)
 const promoRedemptions = store.promoRedemptions
 const botUsers = store.botUsers
 const referrals = store.referrals
-const stockCounts = store.stockCounts
-const rouletteSpins = store.rouletteSpins
-const rouletteSpinPromoRedemptions = store.rouletteSpinPromoRedemptions
+const topupAmounts = [1, 1.5, ...Array.from({ length: 20 }, (_, index) => (index + 1) * 5)]
 const issuedAccessKeys = new Set(Object.keys(activations))
 
 function normalizeStore(rawStore = {}) {
@@ -251,10 +136,6 @@ function normalizeStore(rawStore = {}) {
     promoRedemptions: rawStore.promoRedemptions && typeof rawStore.promoRedemptions === 'object' ? rawStore.promoRedemptions : {},
     botUsers: rawStore.botUsers && typeof rawStore.botUsers === 'object' ? rawStore.botUsers : {},
     referrals: rawStore.referrals && typeof rawStore.referrals === 'object' ? rawStore.referrals : {},
-    rouletteSpins: rawStore.rouletteSpins && typeof rawStore.rouletteSpins === 'object' ? rawStore.rouletteSpins : {},
-    rouletteSpinPromoRedemptions: rawStore.rouletteSpinPromoRedemptions && typeof rawStore.rouletteSpinPromoRedemptions === 'object' ? rawStore.rouletteSpinPromoRedemptions : {},
-    stockCounts: normalizeStockCounts(rawStore),
-    stockCountsVersion,
   }
 }
 
@@ -326,12 +207,12 @@ async function loadStore() {
       console.error('Store load failed', error)
     }
 
-    return { orders: [], topups: [], balances: {}, activations: {}, refbotUsers: [], promoRedemptions: {}, botUsers: {}, referrals: {}, rouletteSpins: {}, rouletteSpinPromoRedemptions: {}, stockCounts: defaultProductStockCounts(), stockCountsVersion }
+    return { orders: [], topups: [], balances: {}, activations: {}, refbotUsers: [], promoRedemptions: {}, botUsers: {}, referrals: {} }
   }
 }
 
 async function saveStore() {
-  const snapshot = { orders, topups, balances: Object.fromEntries(balances), activations, refbotUsers: Array.from(refbotUsers), promoRedemptions, botUsers, referrals, rouletteSpins, rouletteSpinPromoRedemptions, stockCounts, stockCountsVersion }
+  const snapshot = { orders, topups, balances: Object.fromEntries(balances), activations, refbotUsers: Array.from(refbotUsers), promoRedemptions, botUsers, referrals }
 
   try {
     if (await saveSupabaseStore(snapshot)) {
@@ -384,21 +265,6 @@ async function refreshStore() {
   })
   Object.assign(referrals, freshStore.referrals)
 
-  Object.keys(rouletteSpins).forEach((telegramId) => {
-    delete rouletteSpins[telegramId]
-  })
-  Object.assign(rouletteSpins, freshStore.rouletteSpins)
-
-  Object.keys(rouletteSpinPromoRedemptions).forEach((code) => {
-    delete rouletteSpinPromoRedemptions[code]
-  })
-  Object.assign(rouletteSpinPromoRedemptions, freshStore.rouletteSpinPromoRedemptions)
-
-  Object.keys(stockCounts).forEach((productId) => {
-    delete stockCounts[productId]
-  })
-  Object.assign(stockCounts, freshStore.stockCounts)
-
   issuedAccessKeys.clear()
   Object.keys(activations).forEach((key) => {
     issuedAccessKeys.add(key)
@@ -431,7 +297,7 @@ function generateAccessKey() {
 }
 
 function generateCredentialEmail() {
-  const prefixes = ['nerva', 'spark', 'nova', 'pixel', 'orbit', 'neuro', 'cloud', 'blue']
+  const prefixes = ['grozers', 'spark', 'nova', 'pixel', 'orbit', 'neuro', 'cloud', 'blue']
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)]
   const suffix = Math.random().toString(36).slice(2, 8)
 
@@ -591,61 +457,12 @@ function userFromInitData(initData) {
   }
 }
 
-function verifiedUserFromInitData(initData) {
-  if (!botToken || !initData) return null
-
-  const parameters = new URLSearchParams(initData)
-  const receivedHash = parameters.get('hash')
-
-  if (!receivedHash) return null
-
-  const dataCheckString = [...parameters.entries()]
-    .filter(([key]) => key !== 'hash')
-    .sort(([left], [right]) => left.localeCompare(right))
-    .map(([key, value]) => `${key}=${value}`)
-    .join('\n')
-  const secretKey = createHmac('sha256', 'WebAppData').update(botToken).digest()
-  const expectedHash = createHmac('sha256', secretKey).update(dataCheckString).digest('hex')
-  const receivedBuffer = Buffer.from(receivedHash, 'hex')
-  const expectedBuffer = Buffer.from(expectedHash, 'hex')
-
-  if (receivedBuffer.length !== expectedBuffer.length || !timingSafeEqual(receivedBuffer, expectedBuffer)) {
-    return null
-  }
-
-  return userFromInitData(initData)
-}
-
 function resolveTelegramUser({ telegramUser = null, telegramInitData = '' } = {}) {
   if (telegramUser?.id) {
     return telegramUser
   }
 
   return userFromInitData(telegramInitData)
-}
-
-function rouletteCouponsForSpin(spin, telegramId) {
-  if (!spin) return []
-
-  if (Array.isArray(spin.coupons)) {
-    return spin.coupons.filter((coupon) => coupon?.code).map((coupon) => ({
-      ...coupon,
-      code: String(coupon.code).trim().toUpperCase(),
-      discountPercent: 20,
-    }))
-  }
-
-  if (spin.promoUsed) return []
-
-  const accumulatedDiscount = Number(spin.couponDiscountPercent || (spin.promoCode ? 20 : 0))
-  const couponCount = Math.max(0, Math.round(accumulatedDiscount / 20))
-  const baseCode = String(spin.promoCode || `SPIN-${telegramId}`).trim().toUpperCase()
-
-  return Array.from({ length: couponCount }, (_, index) => ({
-    code: index === 0 ? baseCode : `${baseCode}-${index + 1}`,
-    discountPercent: 20,
-    createdAt: spin.createdAt,
-  }))
 }
 
 function resolveTopupPromo({ promoCode, telegramId, amount }) {
@@ -655,12 +472,7 @@ function resolveTopupPromo({ promoCode, telegramId, amount }) {
     return null
   }
 
-  const rouletteCoupon = rouletteCouponsForSpin(rouletteSpins[telegramId], telegramId)
-    .find((coupon) => coupon.code === normalizedCode && !coupon.usedAt)
-  const roulettePromo = rouletteCoupon
-    ? { code: normalizedCode, discountPercent: 20, personal: true }
-    : null
-  const promo = roulettePromo || promoCodes[normalizedCode]
+  const promo = promoCodes[normalizedCode]
 
   if (!promo) {
     throw new Error('Invalid promo code')
@@ -698,90 +510,10 @@ function markPromoRedeemed(telegramId, promoCode) {
     return
   }
 
-  const normalizedPromoCode = String(promoCode).trim().toUpperCase()
-
   promoRedemptions[telegramId] = promoRedemptions[telegramId] || []
 
-  if (!promoRedemptions[telegramId].includes(normalizedPromoCode)) {
-    promoRedemptions[telegramId].push(normalizedPromoCode)
-  }
-
-  if (rouletteSpins[telegramId]) {
-    const redeemedAt = new Date().toISOString()
-    rouletteSpins[telegramId].coupons = rouletteCouponsForSpin(rouletteSpins[telegramId], telegramId)
-      .map((coupon) => coupon.code === normalizedPromoCode ? { ...coupon, usedAt: redeemedAt } : coupon)
-    const nextCoupon = rouletteSpins[telegramId].coupons.find((coupon) => !coupon.usedAt)
-    rouletteSpins[telegramId].promoCode = nextCoupon?.code || null
-    rouletteSpins[telegramId].promoUsed = !nextCoupon
-    rouletteSpins[telegramId].couponDiscountPercent = nextCoupon ? 20 : 0
-  }
-}
-
-function selectRoulettePrize() {
-  const totalWeight = roulettePrizes.reduce((sum, prize) => sum + prize.weight, 0)
-  let cursor = Math.random() * totalWeight
-
-  for (const prize of roulettePrizes) {
-    cursor -= prize.weight
-    if (cursor <= 0) return prize
-  }
-
-  return roulettePrizes[0]
-}
-
-function rouletteSpinPromoUses(code) {
-  const storedUses = rouletteSpinPromoRedemptions[code]
-
-  if (!storedUses) return []
-  return Array.isArray(storedUses) ? storedUses : [storedUses]
-}
-
-function resolveRouletteSpinPromo(promoCode, telegramId, isAdmin) {
-  const normalizedCode = String(promoCode || '').trim().toUpperCase()
-
-  if (!normalizedCode) return null
-
-  const promo = rouletteSpinPromoCodes[normalizedCode]
-
-  if (!promo) {
-    throw new Error('Invalid spin promo code')
-  }
-
-  if (promo.adminOnly && !isAdmin) {
-    throw new Error('This spin promo code is available only to the administrator')
-  }
-
-  if (promo.unlimited) {
-    return promo
-  }
-
-  const uses = rouletteSpinPromoUses(normalizedCode)
-
-  if (uses.some((redemption) => String(redemption.telegramId) === String(telegramId))) {
-    throw new Error('Spin promo code has already been used by this user')
-  }
-
-  if (promo.maxRedemptions && uses.length >= promo.maxRedemptions) {
-    throw new Error('Spin promo code activation limit reached')
-  }
-
-  return promo
-}
-
-function isSupportedTopupAmount(amount) {
-  return Number.isFinite(amount) && amount >= 1 && amount <= 100
-}
-
-function roulettePrizePayload(prize, spin) {
-  return {
-    id: prize.id,
-    type: prize.type,
-    amount: prize.amount,
-    discountPercent: prize.discountPercent,
-    productId: prize.productId,
-    productTitle: prize.productId ? products[prize.productId]?.title : undefined,
-    promoCode: spin?.promoCode,
-    couponDiscountPercent: spin?.couponDiscountPercent,
+  if (!promoRedemptions[telegramId].includes(promoCode)) {
+    promoRedemptions[telegramId].push(promoCode)
   }
 }
 
@@ -834,42 +566,6 @@ async function getCryptoInvoice(invoiceId) {
   }
 
   return data.result?.items?.[0] || null
-}
-
-async function isSubscribedToRequiredChannel(telegramId) {
-  if (skipChannelCheck) {
-    return true
-  }
-
-  if (!bot || !telegramId) {
-    return false
-  }
-
-  const member = await bot.telegram.getChatMember(requiredChannelChat, telegramId)
-
-  return ['creator', 'administrator', 'member'].includes(member.status)
-}
-
-async function requireSubscribedTelegramId(telegramId, response) {
-  const normalizedTelegramId = String(telegramId || '').trim()
-
-  if (!normalizedTelegramId) {
-    response.status(400).json({ error: 'Telegram user is required', channelUrl: requiredChannelUrl })
-    return false
-  }
-
-  try {
-    if (await isSubscribedToRequiredChannel(normalizedTelegramId)) {
-      return true
-    }
-  } catch (error) {
-    console.error('Telegram channel subscription check failed', error)
-    response.status(502).json({ error: 'Could not check channel subscription', channelUrl: requiredChannelUrl })
-    return false
-  }
-
-  response.status(403).json({ error: 'SUBSCRIPTION_REQUIRED', channelUrl: requiredChannelUrl })
-  return false
 }
 
 async function creditTopup(topup) {
@@ -956,32 +652,19 @@ app.use(cors())
 app.use(express.json())
 
 app.get('/api/config', (request, response) => {
-  const telegramId = String(request.query.telegramId || '').trim()
-
   response.json({
     sellerUrl,
     products,
     walletPayments: walletPayOptions,
-    maintenance: maintenanceMode && (!adminChatId || telegramId !== adminChatId),
-    isAdmin: Boolean(adminChatId && telegramId === adminChatId),
   })
 })
 
-app.get('/api/stocks', (request, response) => {
-  response.json({ stockCounts })
-})
-
 app.get('/health', (request, response) => {
-  response.json({ ok: true, service: 'grozersstore-miniapp', bot: botUsername })
+  response.json({ ok: true, service: 'grozersstore-miniapp' })
 })
 
-app.get('/api/orders', async (request, response) => {
+app.get('/api/orders', (request, response) => {
   const telegramId = String(request.query.telegramId || '').trim()
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
-    return
-  }
-
   const userOrders = telegramId
     ? orders.filter((order) => String(order.telegramUser?.id || '').trim() === telegramId)
     : orders
@@ -989,215 +672,11 @@ app.get('/api/orders', async (request, response) => {
   response.json({ orders: userOrders })
 })
 
-app.get('/api/balance/:telegramId', async (request, response) => {
+app.get('/api/balance/:telegramId', (request, response) => {
   const telegramId = request.params.telegramId?.trim()
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
-    return
-  }
-
   const balance = balances.get(telegramId) || 0
 
   response.json({ balance })
-})
-
-app.get('/api/roulette/:telegramId', async (request, response) => {
-  const telegramId = String(request.params.telegramId || '').trim()
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
-    return
-  }
-
-  const spin = rouletteSpins[telegramId]
-  const prize = spin ? roulettePrizes.find((item) => item.id === spin.prizeId) : null
-  const isAdmin = Boolean(adminChatId && telegramId === adminChatId)
-  const coupons = rouletteCouponsForSpin(spin, telegramId)
-  const normalizedSpin = spin ? {
-    ...spin,
-    freeSpinUsed: spin.freeSpinUsed ?? true,
-    coupons,
-    couponDiscountPercent: coupons.some((coupon) => !coupon.usedAt) ? 20 : 0,
-  } : null
-  const lastDailySpinAt = normalizedSpin?.lastDailySpinAt || normalizedSpin?.createdAt
-  const nextSpinAt = lastDailySpinAt
-    ? new Date(Date.parse(lastDailySpinAt) + rouletteCooldownMs).toISOString()
-    : null
-  const cooldownRemainingMs = nextSpinAt ? Math.max(0, Date.parse(nextSpinAt) - Date.now()) : 0
-
-  response.json({
-    canSpin: isAdmin || cooldownRemainingMs === 0,
-    isAdmin,
-    nextSpinAt: isAdmin || cooldownRemainingMs === 0 ? null : nextSpinAt,
-    cooldownRemainingMs: isAdmin ? 0 : cooldownRemainingMs,
-    spin: normalizedSpin && prize ? { ...normalizedSpin, prize: roulettePrizePayload(prize, normalizedSpin) } : null,
-  })
-})
-
-app.post('/api/roulette/spin', async (request, response) => {
-  const verifiedTelegramUser = verifiedUserFromInitData(request.body?.telegramInitData)
-  const telegramUser = verifiedTelegramUser || resolveTelegramUser(request.body)
-  const telegramId = String(telegramUser?.id || '').trim()
-  const language = deliveryLanguage(request.body?.language)
-  const isAdmin = Boolean(adminChatId && telegramId === adminChatId && verifiedTelegramUser)
-  let spinPromo = null
-
-  if (!telegramId) {
-    response.status(400).json({ error: 'Open the app through Telegram to spin' })
-    return
-  }
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
-    return
-  }
-
-  try {
-    spinPromo = resolveRouletteSpinPromo(request.body?.promoCode, telegramId, isAdmin)
-  } catch (error) {
-    response.status(400).json({ error: error.message })
-    return
-  }
-
-  const previousSpin = rouletteSpins[telegramId]
-  const lastDailySpinAt = previousSpin?.lastDailySpinAt || previousSpin?.createdAt
-  const nextSpinAt = lastDailySpinAt
-    ? new Date(Date.parse(lastDailySpinAt) + rouletteCooldownMs).toISOString()
-    : null
-  const cooldownRemainingMs = nextSpinAt ? Math.max(0, Date.parse(nextSpinAt) - Date.now()) : 0
-
-  if (cooldownRemainingMs > 0 && !isAdmin && !spinPromo) {
-    const cooldownError = language === 'ru'
-      ? 'Возвращайтесь после окончания таймера'
-      : language === 'zh'
-        ? '请在倒计时结束后返回'
-        : 'Come back after the timer ends'
-    response.status(409).json({
-      error: cooldownError,
-      nextSpinAt,
-      cooldownRemainingMs,
-    })
-    return
-  }
-
-  const prize = spinPromo
-    ? roulettePrizes.find((item) => item.id === spinPromo.prizeId)
-    : selectRoulettePrize()
-  const previousCoupons = rouletteCouponsForSpin(previousSpin, telegramId)
-  const spin = {
-    prizeId: prize.id,
-    freeSpinUsed: true,
-    lastDailySpinAt: spinPromo ? lastDailySpinAt || null : new Date().toISOString(),
-    promoCode: null,
-    promoUsed: true,
-    couponDiscountPercent: 0,
-    coupons: previousCoupons,
-    createdAt: new Date().toISOString(),
-  }
-  let order = null
-
-  if (prize.type === 'balance') {
-    const currentBalance = Number(balances.get(telegramId) || 0)
-    balances.set(telegramId, Number((currentBalance + prize.amount).toFixed(2)))
-  }
-
-  if (prize.type === 'promo') {
-    const coupon = {
-      code: `SPIN-${telegramId}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`.toUpperCase(),
-      discountPercent: 20,
-      createdAt: spin.createdAt,
-    }
-    spin.coupons.push(coupon)
-    spin.promoCode = coupon.code
-    spin.couponDiscountPercent = 20
-    spin.promoUsed = false
-  }
-
-  if (prize.type === 'product') {
-    const product = products[prize.productId]
-    order = {
-      id: `spin_${Date.now()}`,
-      productId: prize.productId,
-      productTitle: product.title,
-      price: 0,
-      status: 'roulette_prize',
-      paymentMethod: 'roulette',
-      accessKey: generateAccessKey(),
-      language,
-      customer: {},
-      telegramUser,
-      createdAt: spin.createdAt,
-    }
-    orders.unshift(order)
-    stockCounts[prize.productId] = Math.max(0, Number(stockCounts[prize.productId] || 0) - 1)
-    registerActivationKey(order.accessKey, telegramId, 0, 'roulette_prize')
-  }
-
-  rouletteSpins[telegramId] = spin
-  if (spinPromo && !spinPromo.unlimited) {
-    rouletteSpinPromoRedemptions[spinPromo.code] = [...rouletteSpinPromoUses(spinPromo.code), {
-      telegramId,
-      redeemedAt: spin.createdAt,
-    }]
-  }
-  await saveStore()
-
-  if (order) {
-    await bot?.telegram.sendMessage(telegramId, purchaseDeliveryMessage(order.accessKey, language))
-  }
-
-  if (bot && adminChatId) {
-    const winner = telegramUser?.username ? `@${telegramUser.username}` : telegramId
-    const prizeLabel = prize.type === 'balance'
-      ? `$${prize.amount} на баланс`
-      : prize.type === 'promo'
-        ? `купон 20% (${spin.promoCode})`
-        : products[prize.productId]?.title || prize.id
-
-    try {
-      await bot.telegram.sendMessage(
-        adminChatId,
-        `🎰 Выпал приз в рулетке\nПользователь: ${winner}\nTelegram ID: ${telegramId}\nПриз: ${prizeLabel}\nБаланс после: $${balances.get(telegramId) || 0}`,
-      )
-    } catch (error) {
-      console.error('Roulette admin notification failed', error?.message || error)
-    }
-  }
-
-  const dailyNextSpinAt = spin.lastDailySpinAt
-    ? new Date(Date.parse(spin.lastDailySpinAt) + rouletteCooldownMs).toISOString()
-    : null
-  const dailyCooldownRemainingMs = dailyNextSpinAt
-    ? Math.max(0, Date.parse(dailyNextSpinAt) - Date.now())
-    : 0
-
-  response.status(201).json({
-    canSpin: isAdmin || dailyCooldownRemainingMs === 0,
-    isAdmin,
-    nextSpinAt: isAdmin || dailyCooldownRemainingMs === 0 ? null : dailyNextSpinAt,
-    cooldownRemainingMs: isAdmin ? 0 : dailyCooldownRemainingMs,
-    spin: { ...spin, prize: roulettePrizePayload(prize, spin) },
-    balance: balances.get(telegramId) || 0,
-    order,
-    stockCounts,
-  })
-})
-
-app.post('/api/subscription/check', async (request, response) => {
-  const telegramUser = resolveTelegramUser(request.body)
-  const telegramId = String(telegramUser?.id || '').trim()
-
-  if (!telegramId) {
-    response.status(400).json({ error: 'Open the app through Telegram to continue', channelUrl: requiredChannelUrl })
-    return
-  }
-
-  try {
-    const subscribed = await isSubscribedToRequiredChannel(telegramId)
-
-    response.json({ subscribed, channelUrl: requiredChannelUrl })
-  } catch (error) {
-    console.error('Telegram channel subscription check failed', error)
-    response.status(502).json({ error: 'Could not check channel subscription', channelUrl: requiredChannelUrl })
-  }
 })
 
 app.post('/api/topups', async (request, response) => {
@@ -1206,17 +685,13 @@ app.post('/api/topups', async (request, response) => {
   const normalizedAmount = Number(amount)
   const telegramId = String(telegramUser?.id || '').trim()
 
-  if (!isSupportedTopupAmount(normalizedAmount)) {
+  if (!topupAmounts.includes(normalizedAmount)) {
     response.status(400).json({ error: 'Unsupported top-up amount' })
     return
   }
 
   if (!telegramId) {
     response.status(400).json({ error: 'Open the app through Telegram to top up balance' })
-    return
-  }
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
     return
   }
 
@@ -1298,17 +773,13 @@ app.post('/api/topups/wallet', async (request, response) => {
   const telegramId = String(telegramUser?.id || '').trim()
   const walletPayOption = walletPayOptions.find((option) => option.id === networkId)
 
-  if (!isSupportedTopupAmount(normalizedAmount)) {
+  if (!topupAmounts.includes(normalizedAmount)) {
     response.status(400).json({ error: 'Unsupported top-up amount' })
     return
   }
 
   if (!telegramId) {
     response.status(400).json({ error: 'Open the app through Telegram to top up balance' })
-    return
-  }
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
     return
   }
 
@@ -1327,7 +798,7 @@ app.post('/api/topups/wallet', async (request, response) => {
   }
 
   const uniquePart = (topups.filter((topup) => topup.status !== 'paid').length % 90) + 10
-  const payableAmount = await walletPayableAmountUsdToAsset(promo?.payableAmount || normalizedAmount, walletPayOption, uniquePart)
+  const payableAmount = Number(((promo?.payableAmount || normalizedAmount) + uniquePart / 10000).toFixed(4))
   const topup = {
     id: `top_${Date.now()}`,
     amount: normalizedAmount,
@@ -1376,17 +847,13 @@ app.post('/api/topups/paypage', async (request, response) => {
   const normalizedAmount = Number(amount)
   const telegramId = String(telegramUser?.id || '').trim()
 
-  if (!isSupportedTopupAmount(normalizedAmount)) {
+  if (!topupAmounts.includes(normalizedAmount)) {
     response.status(400).json({ error: 'Unsupported top-up amount' })
     return
   }
 
   if (!telegramId) {
     response.status(400).json({ error: 'Open the app through Telegram to top up balance' })
-    return
-  }
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
     return
   }
 
@@ -1420,14 +887,9 @@ app.post('/api/topups/paypage', async (request, response) => {
 app.post('/api/topups/:topupId/crypto', async (request, response) => {
   const topupId = request.params.topupId?.trim()
   const topup = topups.find((item) => item.id === topupId)
-  const telegramId = String(topup?.telegramUser?.id || '').trim()
 
   if (!topup) {
     response.status(404).json({ error: 'Top-up not found' })
-    return
-  }
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
     return
   }
 
@@ -1475,15 +937,10 @@ app.post('/api/topups/:topupId/wallet', async (request, response) => {
   const topupId = request.params.topupId?.trim()
   const { networkId = 'ton' } = request.body ?? {}
   const topup = topups.find((item) => item.id === topupId)
-  const telegramId = String(topup?.telegramUser?.id || '').trim()
   const walletPayOption = walletPayOptions.find((option) => option.id === networkId)
 
   if (!topup) {
     response.status(404).json({ error: 'Top-up not found' })
-    return
-  }
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
     return
   }
 
@@ -1493,7 +950,7 @@ app.post('/api/topups/:topupId/wallet', async (request, response) => {
   }
 
   const uniquePart = (topups.filter((item) => item.status !== 'paid').length % 90) + 10
-  const payableAmount = await walletPayableAmountUsdToAsset(topup.promo?.payableAmount || topup.amount, walletPayOption, uniquePart)
+  const payableAmount = Number(((topup.promo?.payableAmount || topup.amount) + uniquePart / 10000).toFixed(4))
   topup.status = 'wallet_pending'
   topup.paymentMethod = 'wallet'
   topup.walletPayment = {
@@ -1529,14 +986,9 @@ app.post('/api/topups/:topupId/wallet', async (request, response) => {
 app.post('/api/topups/:topupId/paid', async (request, response) => {
   const topupId = request.params.topupId?.trim()
   const topup = topups.find((item) => item.id === topupId)
-  const telegramId = String(topup?.telegramUser?.id || '').trim()
 
   if (!topup) {
     response.status(404).json({ error: 'Top-up not found' })
-    return
-  }
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
     return
   }
 
@@ -1599,10 +1051,6 @@ app.get('/api/topups/:topupId/status', async (request, response) => {
     return
   }
 
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
-    return
-  }
-
   try {
     if (topup.paymentMethod !== 'wallet') {
       await refreshTopupStatus(topup)
@@ -1616,17 +1064,12 @@ app.get('/api/topups/:topupId/status', async (request, response) => {
   response.json({ topup, balance: balances.get(telegramId) || 0 })
 })
 
-app.get('/api/topups/:topupId/payment', async (request, response) => {
+app.get('/api/topups/:topupId/payment', (request, response) => {
   const topupId = request.params.topupId?.trim()
   const topup = topups.find((item) => item.id === topupId)
-  const telegramId = String(topup?.telegramUser?.id || '').trim()
 
   if (!topup) {
     response.status(404).json({ error: 'Payment not found' })
-    return
-  }
-
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
     return
   }
 
@@ -1659,10 +1102,6 @@ app.post('/api/orders/balance', async (request, response) => {
     return
   }
 
-  if (!(await requireSubscribedTelegramId(telegramId, response))) {
-    return
-  }
-
   const currentBalance = balances.get(telegramId) || 0
 
   if (currentBalance < product.price) {
@@ -1691,7 +1130,6 @@ app.post('/api/orders/balance', async (request, response) => {
   }
 
   orders.unshift(order)
-  stockCounts[productId] = Math.max(0, Number(stockCounts[productId] || 0) - 1)
   registerActivationKey(order.accessKey, telegramId, order.price, 'balance_order')
   await saveStore()
 
@@ -1712,7 +1150,7 @@ app.post('/api/orders/balance', async (request, response) => {
     await bot.telegram.sendMessage(adminChatId, adminLines.join('\n'))
   }
 
-  response.status(201).json({ order, balance: updatedBalance, stockCounts })
+  response.status(201).json({ order, balance: updatedBalance })
 })
 
 app.use(express.static(path.join(__dirname, 'dist')))
@@ -1727,7 +1165,6 @@ if (botToken) {
   bot = new Telegraf(botToken)
   const userLanguages = new Map()
   const pendingSupportUsers = new Set()
-  const activeSupportChats = new Set()
   const pendingAdminReplies = new Map()
 
   async function safeAnswerCbQuery(context, text) {
@@ -1763,10 +1200,8 @@ if (botToken) {
   }
 
   function formatBotOrders(userOrders, { locale, title, emptyText, dateLabel, priceLabel, codeLabel }) {
-    const activationLine = `Сайт активации: ${activationSiteUrl}`
-
     if (!userOrders.length) {
-      return `${title}\n\n${emptyText}\n\n${activationLine}`
+      return `${title}\n\n${emptyText}`
     }
 
     const orderLines = userOrders.slice(0, 10).map((order, index) => {
@@ -1787,7 +1222,7 @@ if (botToken) {
       return lines.join('\n')
     })
 
-    return [title, '', ...orderLines, activationLine].join('\n\n')
+    return [title, '', ...orderLines].join('\n\n')
   }
 
   const botText = {
@@ -1827,19 +1262,9 @@ if (botToken) {
         'Kimi уже добавлен в каталог: Kimi K2, Kimi Pro и Kimi API Pack.',
       ].join('\n'),
       support: '💬 Поддержка\n\nНапишите ваш вопрос или проблему следующим сообщением. Мы передадим обращение оператору.',
-      supportRedirect: (username) => `Если у вас возникли проблемы или вопросы, то откройте тикет в боте: ${username}`,
       supportReceived: 'Спасибо. Ваше обращение отправлено в поддержку.',
       about: '🔷 О проекте\n\nGrozersStore Store помогает быстро покупать подписки на популярные AI-сервисы.',
       balance: (amount) => `💳 Баланс\n\nВаш текущий баланс: $${amount}`,
-      subscribeRequired: [
-        'Подпишитесь на канал GrozersStore, чтобы открыть каталог.',
-        '',
-        'Если вы уже подписаны, нажмите кнопку проверки ниже.',
-      ].join('\n'),
-      subscribeSuccess: 'Подписка найдена. Открываю меню.',
-      subscribeMissing: 'Подписка не найдена. Подпишитесь на канал и нажмите проверку еще раз.',
-      subscribeButton: 'Подписаться на канал',
-      checkSubscribeButton: 'Я подписался',
       shop: '🧭 Открыть каталог',
       guideButton: '📖 Как купить',
       ordersButton: '📦 Мои покупки',
@@ -1885,19 +1310,9 @@ if (botToken) {
         'Kimi is now in the catalog: Kimi K2, Kimi Pro and Kimi API Pack.',
       ].join('\n'),
       support: '💬 Support\n\nSend your question or problem in the next message. We will forward it to an operator.',
-      supportRedirect: (username) => `If you have any problems or questions, please open a ticket in the bot: ${username}`,
       supportReceived: 'Thank you. Your request has been sent to support.',
       about: '🔷 About\n\nGrozersStore Store helps you buy subscriptions for popular AI services quickly.',
       balance: (amount) => `💳 Balance\n\nYour current balance: $${amount}`,
-      subscribeRequired: [
-        'Subscribe to the GrozersStore channel to open the catalog.',
-        '',
-        'If you are already subscribed, press the check button below.',
-      ].join('\n'),
-      subscribeSuccess: 'Subscription found. Opening the menu.',
-      subscribeMissing: 'Subscription was not found. Subscribe to the channel and press check again.',
-      subscribeButton: 'Subscribe to channel',
-      checkSubscribeButton: 'I subscribed',
       shop: '🧭 Open catalog',
       guideButton: '📖 How to buy',
       ordersButton: '📦 My purchases',
@@ -1943,19 +1358,9 @@ if (botToken) {
         'Kimi 已加入目录：Kimi K2、Kimi Pro 和 Kimi API Pack。',
       ].join('\n'),
       support: '💬 支持\n\n请在下一条消息中发送你的问题。我们会转交给客服。',
-      supportRedirect: (username) => `如果您遇到问题或有任何疑问，请在此机器人中创建工单：${username}`,
       supportReceived: '谢谢。你的请求已发送给支持团队。',
       about: '🔷 关于项目\n\nGrozersStore Store 帮助你快速购买热门 AI 服务订阅。',
       balance: (amount) => `💳 余额\n\n当前余额：$${amount}`,
-      subscribeRequired: [
-        '请先订阅 GrozersStore 频道，然后打开目录。',
-        '',
-        '如果你已经订阅，请点击下面的检查按钮。',
-      ].join('\n'),
-      subscribeSuccess: '已找到订阅。正在打开菜单。',
-      subscribeMissing: '未找到订阅。请订阅频道后再次点击检查。',
-      subscribeButton: '订阅频道',
-      checkSubscribeButton: '我已订阅',
       shop: '🧭 打开目录',
       guideButton: '📖 如何购买',
       ordersButton: '📦 我的购买',
@@ -1995,33 +1400,8 @@ if (botToken) {
     ])
   }
 
-  function subscriptionKeyboard(language) {
-    const text = botText[language]
-
-    return Markup.inlineKeyboard([
-      [Markup.button.url(text.subscribeButton, requiredChannelUrl)],
-      [Markup.button.callback(text.checkSubscribeButton, 'check_subscription')],
-      [Markup.button.callback(text.languageButton, 'language')],
-    ])
-  }
-
   function currentLanguage(context) {
     return userLanguages.get(context.from?.id) || 'ru'
-  }
-
-  async function stopIfSupportChatActive(context) {
-    if (!activeSupportChats.has(context.from?.id)) {
-      return false
-    }
-
-    if (context.callbackQuery) {
-      await safeAnswerCbQuery(context, 'Вы в чате с поддержкой')
-    }
-
-    activeSupportChats.delete(context.from.id)
-    pendingSupportUsers.delete(context.from.id)
-    await context.reply(botText[currentLanguage(context)].supportRedirect(supportBotUsername))
-    return true
   }
 
   function rememberBotUser(context, language = currentLanguage(context)) {
@@ -2038,6 +1418,42 @@ if (botToken) {
     }
   }
 
+  function promoBroadcastMessage(language) {
+    const messages = {
+      ru: [
+        '⭐ GrozersStore уже 200 подписчиков',
+        '',
+        'Актуальный промокод: SUB200',
+        'Он дает скидку 25% на оплату пополнения баланса.',
+        '',
+        'Открой каталог, нажми пополнение баланса и введи промокод в поле скидки.',
+        '',
+        'Также в каталоге появились Kimi K2, Kimi Pro и Kimi API Pack.',
+      ],
+      en: [
+        '⭐ GrozersStore reached 200 subscribers',
+        '',
+        'Current promo code: SUB200',
+        'It gives 25% off your balance top-up payment.',
+        '',
+        'Open the catalog, top up your balance and enter the promo code in the discount field.',
+        '',
+        'Kimi K2, Kimi Pro and Kimi API Pack are now in the catalog.',
+      ],
+      zh: [
+        '⭐ GrozersStore 已达到 200 位订阅者',
+        '',
+        '当前优惠码：SUB200',
+        '充值余额付款享 25% 折扣。',
+        '',
+        '打开目录，充值余额，并在折扣输入框中输入优惠码。',
+        '',
+        'Kimi K2、Kimi Pro 和 Kimi API Pack 已加入目录。',
+      ],
+    }
+
+    return (messages[language] || messages.ru).join('\n')
+  }
 
   function trackReferral(referrerId, referredUser) {
     const inviterId = String(referrerId || '').trim()
@@ -2093,45 +1509,6 @@ if (botToken) {
     await context.reply(botText[language].welcome(name), mainKeyboard(language, context.from?.id))
   }
 
-  async function sendSubscriptionGate(context, language) {
-    await context.reply(botText[language].subscribeRequired, subscriptionKeyboard(language))
-  }
-
-  async function sendMainMenuIfSubscribed(context, language) {
-    const telegramId = String(context.from?.id || '').trim()
-
-    try {
-      if (await isSubscribedToRequiredChannel(telegramId)) {
-        await sendMainMenu(context, language)
-        return true
-      }
-    } catch (error) {
-      console.error('Telegram channel subscription check failed', error)
-    }
-
-    await sendSubscriptionGate(context, language)
-    return false
-  }
-
-  async function ensureSubscribedForBotAction(context, language = currentLanguage(context)) {
-    const telegramId = String(context.from?.id || '').trim()
-
-    try {
-      if (await isSubscribedToRequiredChannel(telegramId)) {
-        return true
-      }
-    } catch (error) {
-      console.error('Telegram channel subscription check failed', error)
-    }
-
-    if (context.callbackQuery) {
-      await safeAnswerCbQuery(context, botText[language].subscribeMissing)
-    }
-
-    await sendSubscriptionGate(context, language)
-    return false
-  }
-
   bot.start(async (context) => {
     rememberBotUser(context)
 
@@ -2150,13 +1527,9 @@ if (botToken) {
   })
 
   bot.command('shop', async (context) => {
-    if (await stopIfSupportChatActive(context)) {
-      return
-    }
-
     rememberBotUser(context)
     await saveStore()
-    await sendMainMenuIfSubscribed(context, currentLanguage(context))
+    await sendMainMenu(context, currentLanguage(context))
   })
 
   bot.command('myid', async (context) => {
@@ -2176,44 +1549,9 @@ if (botToken) {
       '/refstats - статистика, кто сколько людей пригласил',
       '/confirmtopup - подтвердить последнее неоплаченное пополнение',
       '/confirmtopup <topup_id> - подтвердить конкретное пополнение',
-      '/getbalance <telegram_id> - посмотреть баланс пользователя',
       '/setbalance <telegram_id> <amount> - установить баланс пользователю',
       '/myid - показать ваш Telegram ID',
       'Кнопка Ответить под обращением - ответить пользователю через бота',
-    ].join('\n'))
-  })
-
-  bot.command(['getbalance', 'balanceof'], async (context) => {
-    if (String(context.from.id) !== adminChatId) {
-      await context.reply('Команда доступна только администратору.')
-      return
-    }
-
-    const [, telegramId = ''] = context.message.text.trim().split(/\s+/)
-
-    if (!/^\d+$/.test(telegramId)) {
-      await context.reply('Использование: /getbalance <telegram_id>')
-      return
-    }
-
-    await refreshStore()
-
-    const balance = balances.get(telegramId) || 0
-    const user = botUsers[telegramId]
-    const userOrders = orders.filter((order) => String(order.telegramUser?.id || '').trim() === telegramId)
-    const paidOrders = userOrders.filter((order) => order.status === 'paid_from_balance' || order.status === 'paid')
-    const name = user?.username
-      ? `@${user.username}`
-      : [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'неизвестно'
-
-    await context.reply([
-      'Баланс пользователя',
-      '',
-      `ID: ${telegramId}`,
-      `Пользователь: ${name}`,
-      `Баланс: $${Number(balance).toFixed(2)}`,
-      `Заказов всего: ${userOrders.length}`,
-      `Оплаченных заказов: ${paidOrders.length}`,
     ].join('\n'))
   })
 
@@ -2270,7 +1608,23 @@ if (botToken) {
       return
     }
 
-    await context.reply('Promo broadcast is disabled. Active promo: GROZERS20 only.')
+    await refreshStore()
+
+    const recipients = Object.values(botUsers)
+    let sentCount = 0
+    let failedCount = 0
+
+    for (const recipient of recipients) {
+      try {
+        await bot.telegram.sendMessage(recipient.id, promoBroadcastMessage(recipient.language), mainKeyboard(recipient.language || 'ru', recipient.id))
+        sentCount += 1
+      } catch (error) {
+        failedCount += 1
+        console.error('Promo broadcast failed', { telegramId: recipient.id, error: error?.message })
+      }
+    }
+
+    await context.reply(`Рассылка промокодов завершена. Отправлено: ${sentCount}. Ошибок: ${failedCount}.`)
   })
 
   bot.command('refstats', async (context) => {
@@ -2284,15 +1638,9 @@ if (botToken) {
   })
 
   bot.action('support', async (context) => {
-    if (await stopIfSupportChatActive(context)) {
-      return
-    }
-
     await safeAnswerCbQuery(context)
-    await context.reply(
-      botText[currentLanguage(context)].supportRedirect(supportBotUsername),
-      Markup.inlineKeyboard([[Markup.button.url('Открыть support-бота', supportBotUrl)]]),
-    )
+    pendingSupportUsers.add(context.from.id)
+    await context.reply(botText[currentLanguage(context)].support)
   })
 
   bot.action(/support_reply:(\d+)/, async (context) => {
@@ -2306,234 +1654,79 @@ if (botToken) {
     await context.reply(`Напишите ответ пользователю ${context.match[1]} следующим сообщением.`)
   })
 
-  bot.command('stopchat', async (context) => {
-    const telegramId = context.from?.id
-
-    if (!telegramId || !activeSupportChats.has(telegramId)) {
-      await context.reply('У вас нет активного диалога с поддержкой.')
-      return
-    }
-
-    activeSupportChats.delete(telegramId)
-    pendingSupportUsers.delete(telegramId)
-
-    await context.reply('Диалог с поддержкой завершен.')
-
-    if (bot && adminChatId) {
-      const from = context.from
-      await bot.telegram.sendMessage(
-        adminChatId,
-        [
-          'Пользователь завершил диалог с поддержкой.',
-          `Пользователь: ${from.username ? `@${from.username}` : `${from.first_name || ''} ${from.last_name || ''}`.trim() || from.id}`,
-          `ID: ${from.id}`,
-        ].join('\n'),
-      )
-    }
-  })
-
-  bot.on(['photo', 'voice', 'video'], async (context, next) => {
-    const replyToUserId = pendingAdminReplies.get(context.from.id)
-
-    if (replyToUserId && String(context.from.id) === adminChatId) {
-      pendingAdminReplies.delete(context.from.id)
-
-      if (!activeSupportChats.has(Number(replyToUserId))) {
-        await context.reply('Диалог уже завершен пользователем.')
-        return
-      }
-
-      await bot.telegram.sendMessage(replyToUserId, 'Ответ поддержки:')
-      await bot.telegram.copyMessage(replyToUserId, context.chat.id, context.message.message_id)
-      await bot.telegram.sendMessage(replyToUserId, 'Если остались вопросы, продолжайте писать. Если проблема решена, напишите команду /stopchat.')
-      await context.reply('Ответ отправлен пользователю.')
-      return
-    }
-
-    if (!activeSupportChats.has(context.from.id)) {
-      return next()
-    }
-
-    if (bot && adminChatId) {
-      const from = context.from
-
-      await bot.telegram.sendMessage(
-        adminChatId,
-        [
-          'Вопрос от пользователя',
-          `Пользователь: ${from.username ? `@${from.username}` : `${from.first_name || ''} ${from.last_name || ''}`.trim() || from.id}`,
-          `ID: ${from.id}`,
-        ].join('\n'),
-      )
-      await bot.telegram.copyMessage(adminChatId, context.chat.id, context.message.message_id)
-      await bot.telegram.sendMessage(
-        adminChatId,
-        'Ответить пользователю:',
-        Markup.inlineKeyboard([[Markup.button.callback('Ответ поддержки', `support_reply:${from.id}`)]]),
-      )
-    }
-
-    pendingSupportUsers.delete(context.from.id)
-    await context.reply(`${botText[currentLanguage(context)].supportReceived}\n\nЕсли проблема решена, напишите команду /stopchat.`)
-  })
-
   bot.on('text', async (context, next) => {
     const replyToUserId = pendingAdminReplies.get(context.from.id)
 
     if (replyToUserId && String(context.from.id) === adminChatId && !context.message.text.startsWith('/')) {
       pendingAdminReplies.delete(context.from.id)
-
-      if (!activeSupportChats.has(Number(replyToUserId))) {
-        await context.reply('Диалог уже завершен пользователем.')
-        return
-      }
-
-      await bot.telegram.sendMessage(replyToUserId, `Ответ поддержки:\n\n${context.message.text}\n\nЕсли остались вопросы, продолжайте писать. Если проблема решена, напишите команду /stopchat.`)
+      await bot.telegram.sendMessage(replyToUserId, `Ответ поддержки:\n\n${context.message.text}`)
       await context.reply('Ответ отправлен пользователю.')
       return
     }
 
-    if (context.message.text.startsWith('/') || !activeSupportChats.has(context.from.id)) {
+    if (context.message.text.startsWith('/') || !pendingSupportUsers.has(context.from.id)) {
       return next()
     }
+
+    pendingSupportUsers.delete(context.from.id)
 
     if (bot && adminChatId) {
       const from = context.from
       await bot.telegram.sendMessage(
         adminChatId,
         [
-          'Вопрос от пользователя',
+          'Новое обращение в поддержку GrozersStore Store',
           `Пользователь: ${from.username ? `@${from.username}` : `${from.first_name || ''} ${from.last_name || ''}`.trim() || from.id}`,
           `ID: ${from.id}`,
           '',
           context.message.text,
         ].join('\n'),
-        Markup.inlineKeyboard([[Markup.button.callback('Ответ поддержки', `support_reply:${from.id}`)]]),
+        Markup.inlineKeyboard([[Markup.button.callback('Ответить', `support_reply:${from.id}`)]]),
       )
     }
 
-    pendingSupportUsers.delete(context.from.id)
-    await context.reply(`${botText[currentLanguage(context)].supportReceived}\n\nЕсли проблема решена, напишите команду /stopchat.`)
+    await context.reply(botText[currentLanguage(context)].supportReceived)
   })
 
   bot.action('guide', async (context) => {
-    if (await stopIfSupportChatActive(context)) {
-      return
-    }
-
-    const language = currentLanguage(context)
-
-    if (!(await ensureSubscribedForBotAction(context, language))) {
-      return
-    }
-
     await safeAnswerCbQuery(context)
-    await context.reply(botText[language].guide)
+    await context.reply(botText[currentLanguage(context)].guide)
   })
 
   bot.action('orders', async (context) => {
-    if (await stopIfSupportChatActive(context)) {
-      return
-    }
-
-    const language = currentLanguage(context)
-
-    if (!(await ensureSubscribedForBotAction(context, language))) {
-      return
-    }
-
     await safeAnswerCbQuery(context)
 
     const telegramId = String(context.from?.id || '').trim()
     const userOrders = orders.filter((order) => String(order.telegramUser?.id || '').trim() === telegramId)
 
-    await context.reply(botText[language].orders(userOrders))
+    await context.reply(botText[currentLanguage(context)].orders(userOrders))
   })
 
   bot.action('balance', async (context) => {
-    if (await stopIfSupportChatActive(context)) {
-      return
-    }
-
-    const language = currentLanguage(context)
-
-    if (!(await ensureSubscribedForBotAction(context, language))) {
-      return
-    }
-
     await safeAnswerCbQuery(context)
 
     const telegramId = String(context.from?.id || '').trim()
     const balance = balances.get(telegramId) || 0
 
-    await context.reply(botText[language].balance(balance))
+    await context.reply(botText[currentLanguage(context)].balance(balance))
   })
 
   bot.action('promotions', async (context) => {
-    if (await stopIfSupportChatActive(context)) {
-      return
-    }
-
-    const language = currentLanguage(context)
-
-    if (!(await ensureSubscribedForBotAction(context, language))) {
-      return
-    }
-
     await safeAnswerCbQuery(context)
-    await context.reply(botText[language].promotions)
+    await context.reply(botText[currentLanguage(context)].promotions)
   })
 
   bot.action('about', async (context) => {
-    if (await stopIfSupportChatActive(context)) {
-      return
-    }
-
-    const language = currentLanguage(context)
-
-    if (!(await ensureSubscribedForBotAction(context, language))) {
-      return
-    }
-
     await safeAnswerCbQuery(context)
-    await context.reply(botText[language].about)
+    await context.reply(botText[currentLanguage(context)].about)
   })
 
   bot.action('language', async (context) => {
-    if (await stopIfSupportChatActive(context)) {
-      return
-    }
-
     await safeAnswerCbQuery(context)
     await context.reply('Выберите язык / Choose language / 选择语言', languageKeyboard)
   })
 
-  bot.action('check_subscription', async (context) => {
-    if (await stopIfSupportChatActive(context)) {
-      return
-    }
-
-    const language = currentLanguage(context)
-
-    try {
-      if (await isSubscribedToRequiredChannel(String(context.from?.id || '').trim())) {
-        await safeAnswerCbQuery(context, botText[language].subscribeSuccess)
-        await sendMainMenu(context, language)
-        return
-      }
-    } catch (error) {
-      console.error('Telegram channel subscription check failed', error)
-    }
-
-    await safeAnswerCbQuery(context, botText[language].subscribeMissing)
-    await sendSubscriptionGate(context, language)
-  })
-
   bot.action(/set_lang_(ru|en|zh)/, async (context) => {
-    if (await stopIfSupportChatActive(context)) {
-      return
-    }
-
     const language = context.match[1]
 
     userLanguages.set(context.from.id, language)
@@ -2541,7 +1734,7 @@ if (botToken) {
     await saveStore()
     await safeAnswerCbQuery(context, botText[language].languageSelected)
     await context.reply(botText[language].languageSelected)
-    await sendMainMenuIfSubscribed(context, language)
+    await sendMainMenu(context, language)
   })
 
   bot.catch((error, context) => {
@@ -2557,14 +1750,14 @@ if (botToken) {
   bot.launch()
     .then(async () => {
       await bot.telegram.setChatMenuButton({
-        menuButton: {
+        menu_button: {
           type: 'web_app',
           text: 'Open',
           web_app: { url: webAppUrl },
         },
       })
 
-      console.log(`Telegram bot started (${botUsername})`)
+      console.log('Telegram bot started')
     })
     .catch((error) => {
       console.error('Telegram bot failed to start', error)

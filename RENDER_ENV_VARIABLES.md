@@ -32,12 +32,10 @@ https://grozersstore-miniapp.onrender.com
 https://grozersstore-miniapp.onrender.com/activate
 ```
 
-### 7. REQUIRED_CHANNEL_USERNAME
 ```
 @GrozersStore
 ```
 
-### 8. REQUIRED_CHANNEL_URL
 ```
 https://t.me/GrozersStore
 ```
@@ -124,8 +122,6 @@ TELEGRAM_BOT_USERNAME=@GrozersStore_bot
 ADMIN_CHAT_ID=8781709394
 WEB_APP_URL=https://grozersstore-miniapp.onrender.com
 ACTIVATION_SITE_URL=https://grozersstore-miniapp.onrender.com/activate
-REQUIRED_CHANNEL_USERNAME=@GrozersStore
-REQUIRED_CHANNEL_URL=https://t.me/GrozersStore
 SKIP_CHANNEL_CHECK=true
 SELLER_URL=https://t.me/metifrysell
 CRYPTO_PAY_API_URL=https://pay.crypt.bot/api

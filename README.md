@@ -1,10 +1,6 @@
 # GrozersStore Mini App
 
-Telegram bot: `@GrozersStore_bot`.
-
 Telegram Mini App для витрины AI-подписок, пополнения баланса, оплат и выдачи ключей активации.
-
-Этот проект является полной копией функционала из NeurixKeys с заменой всех упоминаний "NervaHub" на "GrozersStore".
 
 ## Локальный запуск
 
@@ -52,18 +48,10 @@ Health Check Path: /health
 
 ```text
 TELEGRAM_BOT_TOKEN=токен_от_BotFather
-TELEGRAM_BOT_USERNAME=@GrozersStore_bot
 ADMIN_CHAT_ID=ваш_telegram_id
 WEB_APP_URL=https://ваш-render-url
 SELLER_URL=https://t.me/metifrysell
-SUPPORT_BOT_URL=https://t.me/your_support_bot
-REQUIRED_CHANNEL_USERNAME=@GrozersStore
-REQUIRED_CHANNEL_URL=https://t.me/GrozersStore
 CRYPTO_PAY_TOKEN=токен_CryptoBot
-TON_USD_RATE=1.31
-TON_USD_RATE_API_URL=https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd
-WALLET_PAY_TON_ADDRESS=UQC8r4dra0Gy1VlxktwRnsTRTcPoKNoqK4xQH94P3SuRRYWC
-WALLET_PAY_TRC20_ADDRESS=TJDqXkQx5nqFhq7RNtySUMCYTZ5Hk96o3G
 ACCOUNT_DELIVERY_THRESHOLD=0.1
 ACTIVATION_SITE_URL=https://ваш-render-url/activate
 ```
@@ -148,15 +136,6 @@ copy factory\example.env.example factory\my-bot.env
 }
 ```
 
-Поменяйте Telegram-канал:
-
-```json
-"telegram": {
-  "channelUsername": "@MyBrand",
-  "channelUrl": "https://t.me/MyBrand"
-}
-```
-
 Для Supabase оставьте:
 
 ```json
@@ -183,7 +162,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 Из папки шаблона:
 
 ```powershell
-cd C:\portfolio-sites\second bot
+cd C:\portfolio-sites\NeurixKeys
 npm.cmd run launch:bot-site -- factory\my-bot.json
 ```
 
