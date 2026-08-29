@@ -21,6 +21,7 @@ const requiredChannelUsername = process.env.REQUIRED_CHANNEL_USERNAME?.trim() ||
 const requiredChannelId = process.env.REQUIRED_CHANNEL_ID?.trim()
 const requiredChannelChat = requiredChannelUsername || requiredChannelId
 const requiredChannelUrl = process.env.REQUIRED_CHANNEL_URL?.trim() || 'https://t.me/GrozersStore'
+const skipChannelCheck = process.env.SKIP_CHANNEL_CHECK !== 'false'
 const cryptoPayToken = process.env.CRYPTO_PAY_TOKEN?.trim()
 const cryptoPayApiUrl = process.env.CRYPTO_PAY_API_URL?.trim() || 'https://pay.crypt.bot/api'
 const cryptoPayAsset = process.env.CRYPTO_PAY_ASSET?.trim() || 'USDT'
@@ -836,6 +837,10 @@ async function getCryptoInvoice(invoiceId) {
 }
 
 async function isSubscribedToRequiredChannel(telegramId) {
+  if (skipChannelCheck) {
+    return true
+  }
+
   if (!bot || !telegramId) {
     return false
   }
@@ -1181,7 +1186,7 @@ app.post('/api/subscription/check', async (request, response) => {
   const telegramId = String(telegramUser?.id || '').trim()
 
   if (!telegramId) {
-    response.status(400).json({ error: 'Open the app through Telegram to continue', channelUrl: requiredChannelUrl })
+    response.json({ subscribed: true, channelUrl: requiredChannelUrl })
     return
   }
 
@@ -2093,6 +2098,11 @@ if (botToken) {
   }
 
   async function sendMainMenuIfSubscribed(context, language) {
+    if (skipChannelCheck) {
+      await sendMainMenu(context, language)
+      return true
+    }
+
     const telegramId = String(context.from?.id || '').trim()
 
     try {
@@ -2109,6 +2119,10 @@ if (botToken) {
   }
 
   async function ensureSubscribedForBotAction(context, language = currentLanguage(context)) {
+    if (skipChannelCheck) {
+      return true
+    }
+
     const telegramId = String(context.from?.id || '').trim()
 
     try {

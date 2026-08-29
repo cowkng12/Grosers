@@ -28,6 +28,8 @@ services:
         value: "@GrozersStore"
       - key: REQUIRED_CHANNEL_URL
         value: https://t.me/GrozersStore
+      - key: SKIP_CHANNEL_CHECK
+        value: "true"
       - key: CRYPTO_PAY_TOKEN
         sync: false
       - key: CRYPTO_PAY_API_URL
