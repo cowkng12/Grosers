@@ -4,8 +4,12 @@
   "folderName": "GrozersStore-New",
   "packageName": "grozersstore-miniapp",
   "storeKey": "grozersstore",
-  "promoPrefix": "GROZERS",
+  "promoPrefix": "AIVORA",
   "sellerUrl": "https://t.me/metifrysell",
+  "telegram": {
+    "channelUsername": "@GrozersStore",
+    "channelUrl": "https://t.me/GrozersStore"
+  },
   "github": {
     "owner": "cowkng12",
     "repo": "new-grozersstore-miniapp",

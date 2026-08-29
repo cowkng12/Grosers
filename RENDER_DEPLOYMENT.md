@@ -19,7 +19,7 @@
 4. Настройки:
    - **Name:** `grozersstore-miniapp`
    - **Environment:** `Node`
-   - **Build Command:** `npm install && npm run build`
+   - **Build Command:** `npm install --include=dev && npm run build`
    - **Start Command:** `npm start`
    - **Plan:** `Free` (или выберите платный)
 5. Добавьте переменные окружения (см. ниже)

@@ -253,6 +253,8 @@ function renderEnvVars(config, values, includeSupabase) {
     ['WEB_APP_URL', values.webAppUrl],
     ['ACTIVATION_SITE_URL', values.activationSiteUrl],
     ['SELLER_URL', values.sellerUrl],
+    ['REQUIRED_CHANNEL_USERNAME', values.telegramChannelUsername],
+    ['REQUIRED_CHANNEL_URL', values.telegramChannelUrl],
     ['CRYPTO_PAY_API_URL', 'https://pay.crypt.bot/api'],
     ['CRYPTO_PAY_ASSET', 'USDT'],
     ['SUPABASE_STORE_KEY', values.storeKey],
@@ -354,7 +356,7 @@ async function createRenderService(config, values, apiKey, ownerId, envVars) {
     healthCheckPath: renderConfig.healthCheckPath || '/health',
     numInstances: Number(renderConfig.numInstances || 1),
     envSpecificDetails: {
-      buildCommand: renderConfig.buildCommand || 'npm install && npm run build',
+      buildCommand: renderConfig.buildCommand || 'npm install --include=dev && npm run build',
       startCommand: renderConfig.startCommand || 'npm start',
     },
   }
@@ -556,6 +558,8 @@ async function writeEnvExample(targetDir, values) {
     'ADMIN_CHAT_ID=your_admin_chat_id',
     `WEB_APP_URL=${values.webAppUrl}`,
     `SELLER_URL=${values.sellerUrl}`,
+    `REQUIRED_CHANNEL_USERNAME=${values.telegramChannelUsername}`,
+    `REQUIRED_CHANNEL_URL=${values.telegramChannelUrl}`,
     'CRYPTO_PAY_TOKEN=your_crypto_pay_token',
     'CRYPTO_PAY_API_URL=https://pay.crypt.bot/api',
     'CRYPTO_PAY_ASSET=USDT',
@@ -576,6 +580,8 @@ async function writeRenderYaml(targetDir, values, includeSupabase) {
     ['WEB_APP_URL', values.webAppUrl],
     ['ACTIVATION_SITE_URL', values.activationSiteUrl],
     ['SELLER_URL', values.sellerUrl],
+    ['REQUIRED_CHANNEL_USERNAME', values.telegramChannelUsername],
+    ['REQUIRED_CHANNEL_URL', values.telegramChannelUrl],
     ['CRYPTO_PAY_API_URL', 'https://pay.crypt.bot/api'],
     ['CRYPTO_PAY_ASSET', 'USDT'],
     ['SUPABASE_STORE_KEY', values.storeKey],
@@ -598,7 +604,7 @@ async function writeRenderYaml(targetDir, values, includeSupabase) {
     `    name: ${values.renderServiceName}`,
     '    env: node',
     '    plan: free',
-    '    buildCommand: npm install && npm run build',
+    '    buildCommand: npm install --include=dev && npm run build',
     '    startCommand: npm start',
     '    healthCheckPath: /health',
     '    autoDeploy: true',
@@ -635,6 +641,8 @@ function resolveValues(config) {
   const packageName = config.packageName || `${storeKey}-miniapp`
   const renderServiceName = config.render?.serviceName || config.github?.repo || packageName
   const webAppUrl = config.render?.webAppUrl || `https://${renderServiceName}.onrender.com`
+  const telegramChannelUsername = config.telegram?.channelUsername || `@${projectName.replace(/[^a-z0-9_]/gi, '')}`
+  const telegramChannelUrl = config.telegram?.channelUrl || `https://t.me/${telegramChannelUsername.replace(/^@/, '')}`
   const repoUrl = config.render?.repoUrl || (config.github?.owner && config.github?.repo ? `https://github.com/${config.github.owner}/${config.github.repo}` : '')
 
   return {
@@ -648,6 +656,8 @@ function resolveValues(config) {
     targetDir: path.resolve(config.targetDir || path.join(path.dirname(templateRoot), config.folderName || projectName)),
     sellerUrl: config.sellerUrl || 'https://t.me/metifrysell',
     sellerUsername: config.sellerUsername || sellerUsernameFromUrl(config.sellerUrl || 'https://t.me/metifrysell'),
+    telegramChannelUsername,
+    telegramChannelUrl,
     promoPrefix: String(config.promoPrefix || storeKey).toUpperCase().replace(/[^A-Z0-9]/g, ''),
     colors: {
       primary: normalizeHex(config.colors?.primary, '#2563eb'),
@@ -735,9 +745,11 @@ try {
     ['grozersstore-miniapp', values.packageName],
     ['GrozersStore', values.projectName],
     ['grozersstore', values.storeKey],
-    ['GROZERS', values.promoPrefix],
+    ['AIVORA', values.promoPrefix],
     ['https://t.me/metifrysell', values.sellerUrl],
     ['metifrysell', values.sellerUsername],
+    ['@GrozersStore', values.telegramChannelUsername],
+    ['https://t.me/GrozersStore', values.telegramChannelUrl],
     ['#2563eb', values.colors.primary],
     ['#2563EB', values.colors.primary.toUpperCase()],
     ['#38bdf8', values.colors.bright],

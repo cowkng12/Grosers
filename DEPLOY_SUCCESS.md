@@ -15,7 +15,7 @@
 - ✅ Region: Oregon
 - ✅ Plan: Free
 - ✅ Auto-deploy: Enabled (деплой при push в main)
-- ✅ Build: `npm install && npm run build`
+- ✅ Build: `npm install --include=dev && npm run build`
 - ✅ Start: `npm start`
 - ✅ Health Check: `/health`
 

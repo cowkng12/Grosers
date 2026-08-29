@@ -37,7 +37,7 @@ npm run dev
 Настройки Render:
 
 ```text
-Build Command: npm install && npm run build
+Build Command: npm install --include=dev && npm run build
 Start Command: npm start
 Health Check Path: /health
 ```
@@ -162,7 +162,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 Из папки шаблона:
 
 ```powershell
-cd C:\portfolio-sites\NeurixKeys
+cd C:\portfolio-sites\second bot
 npm.cmd run launch:bot-site -- factory\my-bot.json
 ```
 
