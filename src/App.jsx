@@ -375,9 +375,21 @@ const translations = {
     success: 'Заявка отправлена. В течение 5 минут с вами свяжется менеджер, ожидайте.',
     error: 'Не удалось отправить заявку. Проверь backend и попробуй снова.',
     allGroup: 'Все',
-    tabs: { catalog: 'Каталог', orders: 'Заказы' },
+    tabs: { catalog: 'Каталог', leaderboard: '🏆 LeaderBoard' },
     ordersTitle: 'Мои покупки',
     ordersText: 'Пока вы не совершили ни одной покупки.',
+    profileButton: 'Profile',
+    profileTitle: 'Профиль',
+    profilePurchases: 'Совершено покупок',
+    profileSpent: 'Потрачено валюты',
+    profileJoined: 'Первый вход',
+    profileGuest: 'Пользователь',
+    profileMyPurchases: 'Мои покупки',
+    leaderboardTitle: 'LeaderBoard',
+    leaderboardText: 'Кубок активных покупателей. Покупайте товары, чтобы подняться выше.',
+    leaderboardYourStats: 'Ваши результаты',
+    activationSite: 'Сайт активации',
+    activationKey: 'Ключ',
     balanceTitle: 'Баланс',
     balanceText: 'Пока что вы не пополняли баланс.',
     topUpTitle: 'Пополнить баланс',
@@ -485,9 +497,21 @@ const translations = {
     success: 'Request sent. A manager will contact you within 5 minutes, please wait.',
     error: 'Could not send the request. Check backend and try again.',
     allGroup: 'All',
-    tabs: { catalog: 'Catalog', orders: 'Orders' },
+    tabs: { catalog: 'Catalog', leaderboard: '🏆 LeaderBoard' },
     ordersTitle: 'My purchases',
     ordersText: 'You have not made any purchases yet.',
+    profileButton: 'Profile',
+    profileTitle: 'Profile',
+    profilePurchases: 'Completed purchases',
+    profileSpent: 'Currency spent',
+    profileJoined: 'First visit',
+    profileGuest: 'User',
+    profileMyPurchases: 'My purchases',
+    leaderboardTitle: 'LeaderBoard',
+    leaderboardText: 'The cup for active buyers. Buy products to climb higher.',
+    leaderboardYourStats: 'Your stats',
+    activationSite: 'Activation site',
+    activationKey: 'Key',
     balanceTitle: 'Balance',
     balanceText: 'You have not topped up your balance yet.',
     topUpTitle: 'Top up balance',
@@ -595,9 +619,21 @@ const translations = {
     success: '申请已提交。经理将在 5 分钟内联系你，请稍候。',
     error: '请求发送失败。请检查后端并重试。',
     allGroup: '全部',
-    tabs: { catalog: '目录', orders: '订单' },
+    tabs: { catalog: '目录', leaderboard: '🏆 排行榜' },
     ordersTitle: '我的购买',
     ordersText: '你还没有任何购买记录。',
+    profileButton: 'Profile',
+    profileTitle: '个人资料',
+    profilePurchases: '已完成购买',
+    profileSpent: '已消费金额',
+    profileJoined: '首次进入',
+    profileGuest: '用户',
+    profileMyPurchases: '我的购买',
+    leaderboardTitle: '排行榜',
+    leaderboardText: '活跃买家的奖杯。购买商品即可提升排名。',
+    leaderboardYourStats: '你的数据',
+    activationSite: '激活网站',
+    activationKey: '密钥',
     balanceTitle: '余额',
     balanceText: '你还没有充值余额。',
     topUpTitle: '充值余额',
@@ -814,6 +850,38 @@ function formatOrderDate(value) {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+function formatFullDate(value) {
+  if (!value) {
+    return ''
+  }
+
+  return new Date(value).toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function telegramDisplayName(user, fallback = 'User') {
+  if (!user) return fallback
+
+  if (user.username) return `@${user.username}`
+
+  return [user.first_name, user.last_name].filter(Boolean).join(' ') || fallback
+}
+
+function telegramInitials(user) {
+  const source = user?.username || [user?.first_name, user?.last_name].filter(Boolean).join(' ') || 'GS'
+  const words = String(source).replace(/^@/, '').split(/[\s_.-]+/).filter(Boolean)
+  const initials = words.length > 1
+    ? `${words[0][0] || ''}${words[1][0] || ''}`
+    : String(source).replace(/^@/, '').slice(0, 2)
+
+  return initials.toUpperCase() || 'GS'
 }
 
 function currentTelegramUser() {
@@ -1339,10 +1407,125 @@ function RoulettePanel({ language, spin, canSpin, cooldownRemainingMs, isSpinnin
   )
 }
 
+function UserAvatar({ user, size = 'normal' }) {
+  return (
+    <span className={`user-avatar ${size === 'large' ? 'large' : ''}`}>
+      {user?.photo_url ? <img src={user.photo_url} alt="" /> : telegramInitials(user)}
+    </span>
+  )
+}
+
+function OrdersList({ orders, text, activationUrl }) {
+  if (!orders.length) {
+    return <p>{text.ordersText}</p>
+  }
+
+  return (
+    <div className="orders-list profile-orders-list">
+      {orders.map((order) => (
+        <article className="order-card profile-order-card" key={order.id}>
+          <div>
+            <strong>{order.productTitle}</strong>
+            <span>{formatFullDate(order.createdAt)}</span>
+          </div>
+          <span>{formatPrice(order.price)}</span>
+          <dl>
+            <div>
+              <dt>{text.activationSite}</dt>
+              <dd><a href={activationUrl} target="_blank" rel="noreferrer">{activationUrl}</a></dd>
+            </div>
+            <div>
+              <dt>{text.activationKey}</dt>
+              <dd><code>{order.accessKey || '—'}</code></dd>
+            </div>
+          </dl>
+        </article>
+      ))}
+    </div>
+  )
+}
+
+function ProfilePanel({ user, text, orders, joinedAt, profileView, onProfileViewChange, activationUrl }) {
+  const completedPurchases = orders.length
+  const spentAmount = Number(orders.reduce((sum, order) => sum + (Number(order.price) || 0), 0).toFixed(2))
+
+  return (
+    <section className="profile-panel">
+      <div className="profile-switcher" aria-label="Profile sections">
+        <button
+          type="button"
+          className={profileView === 'profile' ? 'active' : ''}
+          onClick={() => onProfileViewChange('profile')}
+        >
+          {text.profileButton}
+        </button>
+        <button
+          type="button"
+          className={profileView === 'orders' ? 'active' : ''}
+          onClick={() => onProfileViewChange('orders')}
+        >
+          {text.profileMyPurchases}
+        </button>
+      </div>
+
+      {profileView === 'profile' ? (
+        <>
+          <header className="profile-header-card">
+            <UserAvatar user={user} size="large" />
+            <div>
+              <span>GrozersStore</span>
+              <h2>{telegramDisplayName(user, text.profileGuest)}</h2>
+            </div>
+          </header>
+          <div className="profile-stats-grid">
+            <article>
+              <span>{text.profilePurchases}</span>
+              <strong>{completedPurchases}</strong>
+            </article>
+            <article>
+              <span>{text.profileSpent}</span>
+              <strong>{formatPrice(spentAmount)}</strong>
+            </article>
+            <article>
+              <span>{text.profileJoined}</span>
+              <strong>{formatOrderDate(joinedAt)}</strong>
+            </article>
+          </div>
+        </>
+      ) : (
+        <section className="profile-orders-panel">
+          <h2>{text.ordersTitle}</h2>
+          <OrdersList orders={orders} text={text} activationUrl={activationUrl} />
+        </section>
+      )}
+    </section>
+  )
+}
+
+function LeaderboardPanel({ text, orders, user }) {
+  const spentAmount = Number(orders.reduce((sum, order) => sum + (Number(order.price) || 0), 0).toFixed(2))
+
+  return (
+    <section className="leaderboard-panel">
+      <div className="leaderboard-cup">🏆</div>
+      <p className="eyebrow">GrozersStore</p>
+      <h2>{text.leaderboardTitle}</h2>
+      <p>{text.leaderboardText}</p>
+      <article>
+        <span>{text.leaderboardYourStats}</span>
+        <strong>{telegramDisplayName(user, text.profileGuest)}</strong>
+        <small>{orders.length} · {formatPrice(spentAmount)}</small>
+      </article>
+    </section>
+  )
+}
+
 function StoreApp() {
   const [selectedProduct, setSelectedProduct] = useState(products[0])
   const [language, setLanguage] = useState('en')
   const [activeTab, setActiveTab] = useState('catalog')
+  const [profileView, setProfileView] = useState('profile')
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const [activeGroup, setActiveGroup] = useState('Все')
   const [selectedTopUpAmount, setSelectedTopUpAmount] = useState(topupAmounts[0])
   const [customTopUpAmount, setCustomTopUpAmount] = useState('')
@@ -1366,8 +1549,25 @@ function StoreApp() {
   const [rouletteError, setRouletteError] = useState('')
   const [roulettePromoCode, setRoulettePromoCode] = useState('')
   const [maintenance, setMaintenance] = useState(null)
+  const [telegramUser] = useState(() => currentTelegramUser())
+  const [firstSeenAt] = useState(() => {
+    const key = 'grozersstore_first_seen_at'
+    const stored = window.localStorage?.getItem(key)
+
+    if (stored) return stored
+
+    const createdAt = new Date().toISOString()
+    window.localStorage?.setItem(key, createdAt)
+    return createdAt
+  })
   const text = translations[language]
   const rouletteCopy = rouletteText[language]
+  const activationUrl = `${window.location.origin}/activate`
+  const bottomTabs = [
+    ['catalog', text.tabs.catalog],
+    ['leaderboard', text.tabs.leaderboard],
+    ['roulette', rouletteCopy.tab],
+  ]
   const availableRouletteCoupons = Array.isArray(rouletteSpin?.coupons)
     ? rouletteSpin.coupons.filter((coupon) => coupon?.code && !coupon.usedAt)
     : []
@@ -1710,6 +1910,30 @@ function StoreApp() {
 
       {activeTab === 'catalog' ? (
         <section className="hero-block">
+          <div className="profile-entry">
+            <button
+              type="button"
+              className="profile-avatar-button"
+              aria-label={text.profileButton}
+              onClick={() => setIsProfileMenuOpen((current) => !current)}
+            >
+              <UserAvatar user={telegramUser} />
+            </button>
+            {isProfileMenuOpen ? (
+              <div className="profile-entry-menu">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileView('profile')
+                    setActiveTab('profile')
+                    setIsProfileMenuOpen(false)
+                  }}
+                >
+                  {text.profileButton}
+                </button>
+              </div>
+            ) : null}
+          </div>
           <div className="hero-content">
             <h1>{storeHeroTitles[language]}</h1>
             <p className="hero-copy">{text.hero}</p>
@@ -1789,26 +2013,18 @@ function StoreApp() {
             </div>
           ) : null}
         </>
-      ) : activeTab === 'orders' ? (
-        <section className="empty-panel">
-          <p className="eyebrow">GrozersStore</p>
-          <h2>{text.ordersTitle}</h2>
-          {orders.length ? (
-            <div className="orders-list">
-              {orders.map((order) => (
-                <article className="order-card" key={order.id}>
-                  <div>
-                    <strong>{order.productTitle}</strong>
-                    <span>{formatOrderDate(order.createdAt)}</span>
-                  </div>
-                  <span>{formatPrice(order.price)}</span>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <p>{text.ordersText}</p>
-          )}
-        </section>
+      ) : activeTab === 'leaderboard' ? (
+        <LeaderboardPanel text={text} orders={orders} user={telegramUser} />
+      ) : activeTab === 'profile' ? (
+        <ProfilePanel
+          user={telegramUser}
+          text={text}
+          orders={orders}
+          joinedAt={firstSeenAt}
+          profileView={profileView}
+          onProfileViewChange={setProfileView}
+          activationUrl={activationUrl}
+        />
       ) : (
         <RoulettePanel
           language={language}
@@ -1949,12 +2165,15 @@ function StoreApp() {
       ) : null}
 
       <nav className="bottom-tabs" aria-label="Mini app tabs">
-        {[...Object.entries(text.tabs), ['roulette', rouletteCopy.tab]].map(([tab, label]) => (
+        {bottomTabs.map(([tab, label]) => (
           <button
             key={tab}
             type="button"
             className={activeTab === tab ? 'active' : ''}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => {
+              setActiveTab(tab)
+              setIsProfileMenuOpen(false)
+            }}
           >
             {label}
           </button>
