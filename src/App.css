@@ -10,10 +10,14 @@
   --text: #f5f5f5;
   --muted: #b8b8b8;
   --subtle: #7e7e7e;
-  --blue: #000000;
-  --blue-bright: #2b2b2b;
-  --blue-deep: #f5f5f5;
-  --success: #e5e5e5;
+  --blue: #0f2f24;
+  --blue-bright: #25d780;
+  --blue-deep: #b9ffd8;
+  --success: #25d780;
+  --menu-bg: rgba(9, 34, 25, 0.94);
+  --menu-bg-soft: rgba(17, 70, 49, 0.72);
+  --menu-active: linear-gradient(135deg, #b9ffd8, #25d780);
+  --menu-glow: 0 16px 36px rgba(37, 215, 128, 0.18);
   --shadow: 0 22px 60px rgba(0, 0, 0, 0.62);
 }
 
@@ -207,8 +211,8 @@
 
 .activation-form input:focus,
 .promo-code-field input:focus {
-  border-color: var(--line-strong);
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.12);
+  border-color: rgba(37, 215, 128, 0.58);
+  box-shadow: 0 0 0 4px rgba(37, 215, 128, 0.14);
 }
 
 .activation-form button,
@@ -414,15 +418,15 @@
   top: 86px;
   right: 18px;
   z-index: 10;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(37, 215, 128, 0.22);
   border-radius: 999px;
   padding: 8px 10px;
-  background: rgba(10, 10, 10, 0.96);
+  background: var(--menu-bg);
   color: var(--blue-deep);
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
+  box-shadow: var(--menu-glow);
 }
 
 .page-language-toggle {
@@ -443,15 +447,15 @@ body.modal-open {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(37, 215, 128, 0.22);
   border-radius: 999px;
   padding: 8px 10px 8px 12px;
-  background: rgba(10, 10, 10, 0.96);
+  background: var(--menu-bg);
   color: var(--text);
   font-size: 13px;
   font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
+  box-shadow: var(--menu-glow);
 }
 
 .balance-pill strong {
@@ -460,8 +464,8 @@ body.modal-open {
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  background: var(--blue);
-  color: #f5f5f5;
+  background: var(--menu-active);
+  color: #03140d;
   line-height: 1;
 }
 
@@ -541,7 +545,7 @@ body.modal-open {
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x proximity;
-  scrollbar-color: rgba(255, 255, 255, 0.42) rgba(255, 255, 255, 0.08);
+  scrollbar-color: rgba(37, 215, 128, 0.55) rgba(37, 215, 128, 0.08);
   scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
 }
@@ -552,31 +556,32 @@ body.modal-open {
 
 .group-tabs::-webkit-scrollbar-track {
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(37, 215, 128, 0.08);
 }
 
 .group-tabs::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.42);
+  background: rgba(37, 215, 128, 0.55);
 }
 
 .group-tab {
   flex: 0 0 auto;
   scroll-snap-align: start;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(37, 215, 128, 0.18);
   border-radius: 999px;
   padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.72);
+  background: var(--menu-bg-soft);
+  color: rgba(222, 255, 235, 0.78);
   cursor: pointer;
   backdrop-filter: blur(12px);
 }
 
 .group-tab.active {
-  border-color: rgba(255, 255, 255, 0.66);
-  background: rgba(255, 255, 255, 0.88);
-  color: #050505;
+  border-color: rgba(185, 255, 216, 0.72);
+  background: var(--menu-active);
+  color: #03140d;
   font-weight: 800;
+  box-shadow: var(--menu-glow);
 }
 
 .catalog-grid {
@@ -890,10 +895,10 @@ body.modal-open {
 
 .topup-grid button,
 .bottom-tabs button {
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(37, 215, 128, 0.22);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.72);
+  background: var(--menu-bg-soft);
+  color: rgba(222, 255, 235, 0.78);
   font-weight: 700;
   cursor: pointer;
   backdrop-filter: blur(12px);
@@ -904,9 +909,9 @@ body.modal-open {
 }
 
 .topup-grid button.active {
-  border-color: rgba(255, 255, 255, 0.66);
-  background: rgba(255, 255, 255, 0.9);
-  color: #050505;
+  border-color: rgba(185, 255, 216, 0.72);
+  background: var(--menu-active);
+  color: #03140d;
 }
 
 .promo-code-field {
@@ -1493,20 +1498,22 @@ body.modal-open {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--line);
-  background: rgba(10, 10, 10, 0.96);
+  border-top: 1px solid rgba(37, 215, 128, 0.18);
+  background: rgba(5, 19, 14, 0.96);
   backdrop-filter: blur(16px);
+  box-shadow: 0 -18px 42px rgba(0, 0, 0, 0.46), 0 -8px 28px rgba(37, 215, 128, 0.08);
 }
 
 .bottom-tabs button {
   padding: 12px 10px;
-  color: var(--muted);
+  color: rgba(222, 255, 235, 0.82);
 }
 
 .bottom-tabs button.active {
-  border-color: rgba(255, 255, 255, 0.62);
-  background: rgba(255, 255, 255, 0.9);
-  color: #050505;
+  border-color: rgba(185, 255, 216, 0.72);
+  background: var(--menu-active);
+  color: #03140d;
+  box-shadow: var(--menu-glow);
 }
 
 @media (max-width: 900px) {
