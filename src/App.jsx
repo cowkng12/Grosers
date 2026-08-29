@@ -861,22 +861,6 @@ function BrandLogo() {
   )
 }
 
-function LaunchSplash({ progress }) {
-  return (
-    <main className="launch-splash" aria-label="GrozersStore loading">
-      <div className="launch-flight" aria-hidden="true">
-        <span className="launch-trail" />
-        <img className="launch-rocket" src="/grozers-launch-rocket.png" alt="" />
-      </div>
-      <img className="launch-brand" src="/grozersstore-brand-reveal.png" alt="GrozersStore, AI Tools, One Hub" />
-      <div className="launch-progress">
-        <div className="launch-loading" aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
-        <strong>{progress}%</strong>
-      </div>
-    </main>
-  )
-}
-
 function ActivationPage() {
   const [language, setLanguage] = useState('en')
   const [key, setKey] = useState('')
@@ -1981,29 +1965,8 @@ function StoreApp() {
 }
 
 function App() {
-  const [isLaunching, setIsLaunching] = useState(true)
-  const [launchProgress, setLaunchProgress] = useState(0)
-  const [isRevealing, setIsRevealing] = useState(false)
-
   useEffect(() => {
-      document.title = ' '
-      const startedAt = performance.now()
-      const progressTimer = window.setInterval(() => {
-        const nextProgress = Math.min(100, Math.round(((performance.now() - startedAt) / 2700) * 100))
-        setLaunchProgress(nextProgress)
-      }, 30)
-      const launchTimer = window.setTimeout(() => {
-        setLaunchProgress(100)
-        setIsLaunching(false)
-        setIsRevealing(true)
-      }, 3500)
-      const revealTimer = window.setTimeout(() => setIsRevealing(false), 3800)
-
-    return () => {
-      window.clearInterval(progressTimer)
-      window.clearTimeout(launchTimer)
-      window.clearTimeout(revealTimer)
-    }
+    document.title = 'GrozersStore'
   }, [])
 
   if (window.location.pathname === '/activate') {
@@ -2014,11 +1977,7 @@ function App() {
     return <WalletPaymentPage />
   }
 
-  if (isLaunching) {
-    return <LaunchSplash progress={launchProgress} />
-  }
-
-  return <div className={isRevealing ? 'app-reveal is-blurred' : 'app-reveal'}><StoreApp /></div>
+  return <StoreApp />
 }
 
 export default App
