@@ -1418,12 +1418,7 @@ function UserAvatar({ user, size = 'normal' }) {
 function StoreLogoMark() {
   return (
     <span className="store-logo-mark" aria-hidden="true">
-      <svg viewBox="0 0 42 42" focusable="false">
-        <path d="M24.5 5.5c6.3 1 10.8 5.7 11.8 12.1L25.9 28 14 16.1 24.5 5.5Z" />
-        <path d="M13.6 17.4 7.4 20l5.2 5.2 2.5-6.3M25.9 28.6l-6.3 2.5 5.2 5.2 2.6-6.2" />
-        <path d="M16.7 27.8 10.5 34" />
-        <circle cx="27.8" cy="14.1" r="2.8" />
-      </svg>
+      <img src="/grozers-launch-rocket.png" alt="" />
     </span>
   )
 }

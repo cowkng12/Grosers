@@ -506,28 +506,18 @@ body.modal-open {
 
 .store-logo-mark {
   display: grid;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   place-items: center;
   border-radius: 999px;
   background: #050505;
-  color: #ff9f1c;
   overflow: hidden;
 }
 
-.store-logo-mark svg {
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 3;
-}
-
-.store-logo-mark circle {
-  fill: currentColor;
-  stroke: none;
+.store-logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .user-avatar {
@@ -557,11 +547,11 @@ body.modal-open {
 
 .profile-entry-menu {
   position: absolute;
-  top: 44px;
+  top: 42px;
   left: 0;
   display: grid;
-  width: 116px;
-  gap: 7px;
+  width: 108px;
+  gap: 6px;
   padding: 0;
   background: transparent;
   border: 0;
@@ -571,16 +561,16 @@ body.modal-open {
 
 .profile-entry-menu button {
   width: 100%;
-  min-height: 34px;
-  border: 1px solid rgba(255, 159, 28, 0.74);
-  border-radius: 8px;
-  padding: 8px 10px;
-  background: linear-gradient(135deg, #ff9f1c, #b45c08);
-  color: #160901;
-  font-size: 12px;
-  font-weight: 950;
+  min-height: 31px;
+  border: 1px solid rgba(255, 159, 28, 0.7);
+  border-radius: 0;
+  padding: 7px 9px;
+  background: #000;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 850;
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(255, 159, 28, 0.2), inset 0 1px rgba(255, 236, 201, 0.22);
+  box-shadow: none;
 }
 
 .hero-controls {
@@ -1063,19 +1053,19 @@ body.modal-open {
 
 .profile-switcher button {
   min-height: 52px;
-  border: 1px solid rgba(255, 159, 28, 0.34);
-  border-radius: 8px;
-  background: rgba(82, 44, 10, 0.58);
-  color: rgba(255, 235, 196, 0.86);
+  border: 1px solid rgba(255, 159, 28, 0.72);
+  border-radius: 0;
+  background: #000;
+  color: #fff;
   font-weight: 900;
   cursor: pointer;
 }
 
 .profile-switcher button.active {
-  border-color: rgba(255, 224, 163, 0.82);
-  background: var(--menu-active);
-  color: #1b0d02;
-  box-shadow: var(--menu-glow);
+  border-color: rgba(255, 224, 163, 0.92);
+  background: #000;
+  color: #ffcc73;
+  box-shadow: 0 0 0 1px rgba(255, 159, 28, 0.15) inset;
 }
 
 .profile-header-card {
@@ -1804,7 +1794,9 @@ body.modal-open {
   justify-content: center;
   gap: 3px;
   padding: 12px 10px;
-  color: rgba(255, 235, 196, 0.84);
+  border-color: rgba(255, 255, 255, 0.52);
+  background: #fff;
+  color: #080502;
   line-height: 1.05;
 }
 
@@ -1814,7 +1806,7 @@ body.modal-open {
   height: 19px;
   place-items: center;
   color: #080502;
-  opacity: 0.92;
+  opacity: 0.98;
 }
 
 .tab-icon svg {
@@ -1824,10 +1816,10 @@ body.modal-open {
 }
 
 .bottom-tabs button.active {
-  border-color: rgba(255, 224, 163, 0.72);
-  background: var(--menu-active);
-  color: #1b0d02;
-  box-shadow: var(--menu-glow);
+  border-color: rgba(255, 159, 28, 0.92);
+  background: linear-gradient(135deg, #fff7e6, #ffcc73);
+  color: #120802;
+  box-shadow: 0 12px 24px rgba(255, 159, 28, 0.16);
 }
 
 @media (max-width: 900px) {
