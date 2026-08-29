@@ -375,7 +375,7 @@ const translations = {
     success: 'Заявка отправлена. В течение 5 минут с вами свяжется менеджер, ожидайте.',
     error: 'Не удалось отправить заявку. Проверь backend и попробуй снова.',
     allGroup: 'Все',
-    tabs: { catalog: 'Каталог', leaderboard: '🏆 LeaderBoard' },
+    tabs: { catalog: 'Каталог', leaderboard: 'LeaderBoard' },
     ordersTitle: 'Мои покупки',
     ordersText: 'Пока вы не совершили ни одной покупки.',
     profileButton: 'Profile',
@@ -497,7 +497,7 @@ const translations = {
     success: 'Request sent. A manager will contact you within 5 minutes, please wait.',
     error: 'Could not send the request. Check backend and try again.',
     allGroup: 'All',
-    tabs: { catalog: 'Catalog', leaderboard: '🏆 LeaderBoard' },
+    tabs: { catalog: 'Catalog', leaderboard: 'LeaderBoard' },
     ordersTitle: 'My purchases',
     ordersText: 'You have not made any purchases yet.',
     profileButton: 'Profile',
@@ -619,7 +619,7 @@ const translations = {
     success: '申请已提交。经理将在 5 分钟内联系你，请稍候。',
     error: '请求发送失败。请检查后端并重试。',
     allGroup: '全部',
-    tabs: { catalog: '目录', leaderboard: '🏆 排行榜' },
+    tabs: { catalog: '目录', leaderboard: '排行榜' },
     ordersTitle: '我的购买',
     ordersText: '你还没有任何购买记录。',
     profileButton: 'Profile',
@@ -1415,6 +1415,47 @@ function UserAvatar({ user, size = 'normal' }) {
   )
 }
 
+function StoreLogoMark() {
+  return (
+    <span className="store-logo-mark" aria-hidden="true">
+      <svg viewBox="0 0 42 42" focusable="false">
+        <path d="M24.5 5.5c6.3 1 10.8 5.7 11.8 12.1L25.9 28 14 16.1 24.5 5.5Z" />
+        <path d="M13.6 17.4 7.4 20l5.2 5.2 2.5-6.3M25.9 28.6l-6.3 2.5 5.2 5.2 2.6-6.2" />
+        <path d="M16.7 27.8 10.5 34" />
+        <circle cx="27.8" cy="14.1" r="2.8" />
+      </svg>
+    </span>
+  )
+}
+
+function TabIcon({ tab }) {
+  return (
+    <span className="tab-icon" aria-hidden="true">
+      {tab === 'catalog' ? (
+        <svg viewBox="0 0 48 48" focusable="false">
+          <path d="M7 10h5.8l4.3 22.4a5 5 0 0 0 4.9 4.1h14.8a5 5 0 0 0 4.8-3.7L45 20H16" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
+          <path d="M18 20h25" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="4" />
+          <circle cx="22" cy="42" r="3.2" fill="currentColor" />
+          <circle cx="38" cy="42" r="3.2" fill="currentColor" />
+        </svg>
+      ) : tab === 'leaderboard' ? (
+        <svg viewBox="0 0 48 48" focusable="false">
+          <path d="M15 8h18v8c0 7-4 12-9 12s-9-5-9-12V8Z" fill="currentColor" />
+          <path d="M15 12H8v4c0 4.8 3.2 8 8 8M33 12h7v4c0 4.8-3.2 8-8 8" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
+          <path d="M24 28v7M16 40h16M20 35h8" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="4" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 48 48" focusable="false">
+          <rect x="8" y="10" width="32" height="26" rx="5" fill="none" stroke="currentColor" strokeWidth="4" />
+          <path d="M8 18h32M16 18v18M24 18v18M32 18v18" fill="none" stroke="currentColor" strokeWidth="3" />
+          <path d="M17 26h3M23 26h3M29 26h3" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="4" />
+          <path d="M40 21h4v8h-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
+        </svg>
+      )}
+    </span>
+  )
+}
+
 function OrdersList({ orders, text, activationUrl }) {
   if (!orders.length) {
     return <p>{text.ordersText}</p>
@@ -1917,7 +1958,7 @@ function StoreApp() {
               aria-label={text.profileButton}
               onClick={() => setIsProfileMenuOpen((current) => !current)}
             >
-              <UserAvatar user={telegramUser} />
+              <StoreLogoMark />
             </button>
             {isProfileMenuOpen ? (
               <div className="profile-entry-menu">
@@ -1930,6 +1971,16 @@ function StoreApp() {
                   }}
                 >
                   {text.profileButton}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileView('orders')
+                    setActiveTab('profile')
+                    setIsProfileMenuOpen(false)
+                  }}
+                >
+                  {text.profileMyPurchases}
                 </button>
               </div>
             ) : null}
@@ -2175,6 +2226,7 @@ function StoreApp() {
               setIsProfileMenuOpen(false)
             }}
           >
+            <TabIcon tab={tab} />
             {label}
           </button>
         ))}
