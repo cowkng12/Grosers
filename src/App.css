@@ -1794,9 +1794,9 @@ body.modal-open {
   justify-content: center;
   gap: 3px;
   padding: 12px 10px;
-  border-color: rgba(255, 255, 255, 0.52);
-  background: #fff;
-  color: #080502;
+  border-color: rgba(255, 255, 255, 0.72);
+  background: #000;
+  color: #fff;
   line-height: 1.05;
 }
 
@@ -1805,8 +1805,8 @@ body.modal-open {
   width: 19px;
   height: 19px;
   place-items: center;
-  color: #080502;
-  opacity: 0.98;
+  color: #fff;
+  opacity: 1;
 }
 
 .tab-icon svg {
@@ -1817,9 +1817,9 @@ body.modal-open {
 
 .bottom-tabs button.active {
   border-color: rgba(255, 159, 28, 0.92);
-  background: linear-gradient(135deg, #fff7e6, #ffcc73);
-  color: #120802;
-  box-shadow: 0 12px 24px rgba(255, 159, 28, 0.16);
+  background: #000;
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 159, 28, 0.18) inset, 0 12px 24px rgba(255, 159, 28, 0.12);
 }
 
 @media (max-width: 900px) {
