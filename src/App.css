@@ -1171,6 +1171,282 @@ body.modal-open {
   gap: 14px;
 }
 
+.leaderboard-arena-status {
+  display: grid;
+  grid-template-columns: 30px minmax(90px, 1fr) repeat(3, auto);
+  gap: 8px;
+  align-items: center;
+}
+
+.arena-level,
+.arena-counter,
+.arena-progress {
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #121820;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.arena-level {
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 950;
+}
+
+.arena-progress {
+  position: relative;
+  overflow: hidden;
+  border-radius: 7px;
+}
+
+.arena-progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #9a64d8, #d3b0ff);
+}
+
+.arena-progress b {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 10px;
+}
+
+.arena-counter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 8px;
+  padding: 0 7px;
+  color: #fff;
+  font-size: 11px;
+}
+
+.arena-counter span {
+  font-size: 14px;
+}
+
+.leaderboard-arena-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: clamp(26px, 5vw, 38px);
+}
+
+.leaderboard-arena-title span {
+  font-size: 28px;
+}
+
+.arena-tournament-card,
+.arena-rank-card,
+.arena-synergy-card {
+  border: 1px solid rgba(255, 159, 28, 0.32);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(73, 34, 135, 0.85), rgba(38, 21, 77, 0.9));
+}
+
+.arena-tournament-card {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+}
+
+.arena-tournament-icon,
+.arena-medal {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(255, 191, 64, 0.18);
+  font-size: 24px;
+}
+
+.arena-tournament-card div,
+.arena-rank-main div {
+  display: grid;
+  gap: 4px;
+}
+
+.arena-tournament-card strong,
+.arena-rank-card strong {
+  color: #fff;
+  font-size: 16px;
+}
+
+.arena-tournament-card small,
+.arena-rank-card small,
+.arena-section-head span,
+.arena-squad-card small {
+  color: #b9c0d0;
+  font-size: 11px;
+}
+
+.arena-tournament-card > b,
+.arena-rank-main > b {
+  color: #fff;
+  font-size: 24px;
+}
+
+.arena-rank-card {
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(29, 54, 86, 0.95), rgba(18, 29, 49, 0.98));
+}
+
+.arena-rank-main {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.arena-medal {
+  color: #d6e2ef;
+  background: rgba(187, 208, 229, 0.16);
+}
+
+.arena-season-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 10px;
+}
+
+.arena-season-meta span {
+  display: grid;
+  gap: 3px;
+}
+
+.arena-season-meta strong {
+  color: #77dfff;
+}
+
+.arena-squad-section {
+  display: grid;
+  gap: 10px;
+}
+
+.arena-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.arena-section-head h3,
+.arena-synergy-card h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 16px;
+}
+
+.arena-squad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.arena-squad-card {
+  position: relative;
+  display: grid;
+  min-height: 142px;
+  justify-items: center;
+  align-content: center;
+  gap: 7px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 8px;
+  background: linear-gradient(180deg, #1b2c45, #111a29);
+  text-align: center;
+}
+
+.arena-squad-card.locked {
+  filter: saturate(0.7);
+  opacity: 0.58;
+}
+
+.arena-slot-number {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 6px;
+  background: #0a111d;
+  color: #fff;
+  font-size: 10px;
+}
+
+.arena-squad-avatar {
+  display: grid;
+  padding: 5px;
+  border: 2px solid #aab8c9;
+  border-radius: 12px;
+}
+
+.arena-squad-card strong {
+  max-width: 100%;
+  overflow: hidden;
+  color: #fff;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arena-lock {
+  font-size: 27px;
+}
+
+.arena-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.arena-mode-switch button,
+.arena-scout-button {
+  border: 1px solid rgba(255, 159, 28, 0.45);
+  border-radius: 9px;
+  padding: 11px 12px;
+  background: rgba(255, 159, 28, 0.08);
+  color: #d8dde8;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.arena-mode-switch button.active,
+.arena-scout-button {
+  background: linear-gradient(135deg, #f3b351, #b56512);
+  color: #1b0d02;
+}
+
+.arena-synergy-card {
+  padding: 14px;
+  background: linear-gradient(180deg, rgba(28, 46, 72, 0.94), rgba(17, 28, 45, 0.96));
+}
+
+.arena-synergy-card p {
+  margin: 8px 0 0;
+  color: #b9c0d0;
+  font-size: 12px;
+}
+
+.arena-scout-button {
+  width: 100%;
+}
+
 .leaderboard-hero {
   display: grid;
   grid-template-columns: 78px minmax(0, 1fr);
@@ -2111,6 +2387,33 @@ body.modal-open {
     grid-template-columns: 1fr;
     justify-items: center;
     text-align: center;
+  }
+
+  .leaderboard-arena-status {
+    grid-template-columns: 28px minmax(0, 1fr) repeat(3, auto);
+    gap: 5px;
+  }
+
+  .arena-counter {
+    padding: 0 5px;
+    font-size: 10px;
+  }
+
+  .arena-counter span {
+    font-size: 12px;
+  }
+
+  .leaderboard-arena-title {
+    font-size: 28px;
+  }
+
+  .arena-squad-grid {
+    gap: 7px;
+  }
+
+  .arena-squad-card {
+    min-height: 132px;
+    padding-inline: 5px;
   }
 
   .leaderboard-panel p:not(.eyebrow) {

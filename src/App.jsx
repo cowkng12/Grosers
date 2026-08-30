@@ -1589,28 +1589,93 @@ function ProfilePanel({ user, text, orders, joinedAt, profileView, onProfileView
 function LeaderboardPanel({ text, orders, user, language }) {
   const spentAmount = Number(orders.reduce((sum, order) => sum + (Number(order.price) || 0), 0).toFixed(2))
   const [howItWorksOpen, setHowItWorksOpen] = useState(true)
+  const arenaCopy = {
+    ru: {
+      arena: 'Реферальная арена',
+      tournament: 'Турнир приглашений',
+      seasonRank: 'Серебро 2',
+      seasonPrize: 'Призовой фонд сезона',
+      seasonEnd: 'До конца',
+      squad: 'Твой отряд',
+      reset: 'сброс через',
+      emptySlot: 'Тренируется',
+      rating: 'Рейтинговые',
+      unranked: 'Без рейтинга',
+      synergies: 'Синергии отряда',
+      noSynergies: 'Нет активных',
+      scout: 'Разведать соперника',
+      invites: 'Приглашения',
+    },
+    en: {
+      arena: 'Referral arena',
+      tournament: 'Invite tournament',
+      seasonRank: 'Silver 2',
+      seasonPrize: 'Season prize pool',
+      seasonEnd: 'Ends in',
+      squad: 'Your squad',
+      reset: 'reset in',
+      emptySlot: 'Training',
+      rating: 'Ranked',
+      unranked: 'Unranked',
+      synergies: 'Squad synergies',
+      noSynergies: 'No active synergies',
+      scout: 'Scout an opponent',
+      invites: 'Invites',
+    },
+    zh: {
+      arena: '邀请竞技场',
+      tournament: '邀请赛',
+      seasonRank: '白银 2',
+      seasonPrize: '赛季奖池',
+      seasonEnd: '结束于',
+      squad: '你的队伍',
+      reset: '重置于',
+      emptySlot: '训练中',
+      rating: '排位',
+      unranked: '无排名',
+      synergies: '队伍协同',
+      noSynergies: '暂无激活协同',
+      scout: '侦察对手',
+      invites: '邀请',
+    },
+  }[language]
 
   return (
     <section className="leaderboard-panel">
-      <header className="leaderboard-hero">
-        <div className="leaderboard-cup">🏆</div>
-        <div>
-          <p className="eyebrow">GrozersStore</p>
-          <h2>{text.leaderboardTitle}</h2>
-          <p>{text.leaderboardText}</p>
-        </div>
+      <header className="leaderboard-arena-status">
+        <div className="arena-level">4</div>
+        <div className="arena-progress"><span style={{ width: '96%' }} /><b>96%</b></div>
+        <div className="arena-counter"><span>🏅</span><b>43</b></div>
+        <div className="arena-counter"><span>🪙</span><b>17k</b></div>
+        <div className="arena-counter"><span>⭐</span><b>41</b></div>
       </header>
 
-      <div className="leaderboard-summary-grid">
-        <article className="leaderboard-summary-card accent">
-          <span>{text.leaderboardPrizePool}</span>
-          <strong>2 000 TON</strong>
-        </article>
-        <article className="leaderboard-summary-card">
-          <span>{text.leaderboardDuration}</span>
-          <strong>15 {language === 'ru' ? 'дней' : language === 'zh' ? '天' : 'days'}</strong>
-        </article>
-      </div>
+      <h2 className="leaderboard-arena-title"><span>🏆</span>{arenaCopy.arena}</h2>
+
+      <article className="arena-tournament-card">
+        <span className="arena-tournament-icon">🏆</span>
+        <div><strong>{arenaCopy.tournament}</strong><small>⏱ 15 {language === 'ru' ? 'дней' : language === 'zh' ? '天' : 'days'} · Top 10</small></div>
+        <b aria-hidden="true">›</b>
+      </article>
+
+      <article className="arena-rank-card">
+        <div className="arena-rank-main"><span className="arena-medal">◈</span><div><strong>{arenaCopy.seasonRank}</strong><small>{arenaCopy.invites}: 0 · MMR 0</small></div><b>›</b></div>
+        <div className="arena-season-meta"><span><small>{arenaCopy.seasonPrize}</small><strong>2 000 TON</strong></span><span><small>{arenaCopy.seasonEnd}</small><strong>15 дней</strong></span></div>
+      </article>
+
+      <section className="arena-squad-section">
+        <div className="arena-section-head"><h3>{arenaCopy.squad} (0/3)</h3><span>⏳ {arenaCopy.reset} 24:00</span></div>
+        <div className="arena-squad-grid">
+          <article className="arena-squad-card active"><span className="arena-slot-number">1</span><span className="arena-squad-avatar"><UserAvatar user={user} /></span><strong>{telegramDisplayName(user, text.profileGuest)}</strong><small>MMR 0 · {arenaCopy.invites}: 0</small></article>
+          <article className="arena-squad-card locked"><span className="arena-slot-number">2</span><span className="arena-lock">🔒</span><strong>{arenaCopy.emptySlot}</strong></article>
+          <article className="arena-squad-card locked"><span className="arena-slot-number">3</span><span className="arena-lock">🔒</span><strong>{arenaCopy.emptySlot}</strong></article>
+        </div>
+      </section>
+
+      <div className="arena-mode-switch"><button type="button" className="active">{arenaCopy.rating}</button><button type="button">{arenaCopy.unranked}</button></div>
+
+      <article className="arena-synergy-card"><h3>{arenaCopy.synergies}</h3><p>{arenaCopy.noSynergies}</p></article>
+      <button className="arena-scout-button" type="button">{arenaCopy.scout}</button>
 
       <button
         type="button"
