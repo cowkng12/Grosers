@@ -1993,6 +1993,13 @@ body.modal-open {
 }
 
 @media (max-width: 640px) {
+  html,
+  body,
+  #root {
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
   .language-toggle {
     top: 70px;
     right: 10px;
@@ -2000,7 +2007,8 @@ body.modal-open {
   }
 
   .page-shell {
-    padding: 14px 12px 84px;
+    width: 100%;
+    padding: 14px 10px calc(104px + env(safe-area-inset-bottom));
   }
 
   .roulette-page {
@@ -2023,6 +2031,7 @@ body.modal-open {
 
   .hero-block {
     gap: 10px;
+    min-height: 190px;
     padding: 58px 14px 14px;
   }
 
@@ -2036,6 +2045,29 @@ body.modal-open {
   .profile-entry {
     top: 8px;
     left: 10px;
+  }
+
+  .profile-avatar-button {
+    width: 44px;
+    height: 44px;
+    border-width: 3px;
+  }
+
+  .store-logo-mark {
+    width: 26px;
+    height: 26px;
+  }
+
+  .profile-entry-menu {
+    top: 48px;
+    width: 148px;
+    gap: 7px;
+  }
+
+  .profile-entry-menu button {
+    min-height: 38px;
+    padding: 9px 11px;
+    font-size: 12px;
   }
 
   .hero-controls {
@@ -2093,6 +2125,13 @@ body.modal-open {
     min-width: 560px;
   }
 
+  .leaderboard-table {
+    max-width: 100%;
+    overflow-x: auto;
+    padding-bottom: 3px;
+    scrollbar-width: thin;
+  }
+
   .leaderboard-ranks-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2116,12 +2155,19 @@ body.modal-open {
   }
 
   .group-tabs {
-    padding-inline: 12px;
+    gap: 10px;
+    padding: 0 12px 8px;
+  }
+
+  .group-tab {
+    padding: 9px 14px;
+    font-size: 13px;
   }
 
   .product-card {
     grid-template-columns: 52px minmax(0, 1fr);
-    min-height: 156px;
+    gap: 10px 12px;
+    min-height: 148px;
     padding: 12px;
   }
 
@@ -2155,12 +2201,12 @@ body.modal-open {
 
   .bottom-tabs {
     gap: 6px;
-    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
   }
 
   .bottom-tabs button {
-    min-height: 48px;
-    padding: 8px 8px;
+    min-height: 58px;
+    padding: 9px 6px;
     font-size: 12px;
   }
 
