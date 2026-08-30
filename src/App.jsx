@@ -352,6 +352,27 @@ const rouletteText = {
   },
 }
 
+const leaderboardDemoRows = [
+  { place: 1, user: '@aurora', invites: 148, mmr: 3620, reward: '420 TON' },
+  { place: 2, user: '@pixelfox', invites: 131, mmr: 3410, reward: '330 TON' },
+  { place: 3, user: '@neonvault', invites: 117, mmr: 3180, reward: '270 TON' },
+  { place: 4, user: '@moonshade', invites: 102, mmr: 2890, reward: '220 TON' },
+  { place: 5, user: '@northbyte', invites: 91, mmr: 2710, reward: '190 TON' },
+  { place: 6, user: '@velora', invites: 84, mmr: 2550, reward: '160 TON' },
+  { place: 7, user: '@codecrown', invites: 72, mmr: 2410, reward: '130 TON' },
+  { place: 8, user: '@starlinkx', invites: 65, mmr: 2260, reward: '110 TON' },
+  { place: 9, user: '@driftmode', invites: 59, mmr: 2140, reward: '90 TON' },
+  { place: 10, user: '@silverset', invites: 52, mmr: 2010, reward: '80 TON' },
+]
+
+const leaderboardRankConfig = [
+  { id: 'bronze', color: '#b37a4c', invites: '1–19', labels: { ru: 'Бронзовая', en: 'Bronze', zh: '青铜' } },
+  { id: 'silver', color: '#a7b3c7', invites: '20–49', labels: { ru: 'Серебряная', en: 'Silver', zh: '白银' } },
+  { id: 'gold', color: '#e1b44a', invites: '50–99', labels: { ru: 'Золотая', en: 'Gold', zh: '黄金' } },
+  { id: 'obsidian', color: '#4a4f64', invites: '100–149', labels: { ru: 'Обсидиановая', en: 'Obsidian', zh: '黑曜石' } },
+  { id: 'mythic', color: '#a45cff', invites: '150+', labels: { ru: 'Мифическая', en: 'Mythic', zh: '神话' } },
+]
+
 const translations = {
   ru: {
     languageLabel: 'RU',
@@ -385,8 +406,17 @@ const translations = {
     profileJoined: 'Первый вход',
     profileGuest: 'Пользователь',
     profileMyPurchases: 'Мои покупки',
-    leaderboardTitle: 'LeaderBoard',
-    leaderboardText: 'Кубок активных покупателей. Покупайте товары, чтобы подняться выше.',
+    leaderboardTitle: 'Реферальная арена',
+    leaderboardText: 'Приглашайте друзей, поднимайте MMR и забирайте часть фонда в 2 000 TON.',
+    leaderboardHowItWorks: 'Как это работает',
+    leaderboardHowItWorksText: 'Приглашайте друзей по своей ссылке, набирайте MMR и поднимайтесь в таблице лидеров. В конце сезона топ-10 участников получат награды из общего призового фонда.',
+    leaderboardPrizePool: 'Призовой фонд',
+    leaderboardDuration: 'До конца',
+    leaderboardTableTitle: 'Таблица лидеров',
+    leaderboardRankTitle: 'Ранги',
+    leaderboardRankLabel: 'Ранг',
+    leaderboardInvitesLabel: 'Приглашения',
+    leaderboardRewardLabel: 'Награда',
     leaderboardYourStats: 'Ваши результаты',
     activationSite: 'Сайт активации',
     activationKey: 'Ключ',
@@ -507,8 +537,17 @@ const translations = {
     profileJoined: 'First visit',
     profileGuest: 'User',
     profileMyPurchases: 'My purchases',
-    leaderboardTitle: 'LeaderBoard',
-    leaderboardText: 'The cup for active buyers. Buy products to climb higher.',
+    leaderboardTitle: 'Referral Arena',
+    leaderboardText: 'Invite friends, raise your MMR and take a share of the 2,000 TON prize pool.',
+    leaderboardHowItWorks: 'How it works',
+    leaderboardHowItWorksText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 10 participants will receive rewards from the total prize pool.',
+    leaderboardPrizePool: 'Prize pool',
+    leaderboardDuration: 'Ends in',
+    leaderboardTableTitle: 'Leaderboard table',
+    leaderboardRankTitle: 'Ranks',
+    leaderboardRankLabel: 'Rank',
+    leaderboardInvitesLabel: 'Invites',
+    leaderboardRewardLabel: 'Reward',
     leaderboardYourStats: 'Your stats',
     activationSite: 'Activation site',
     activationKey: 'Key',
@@ -629,8 +668,17 @@ const translations = {
     profileJoined: '首次进入',
     profileGuest: '用户',
     profileMyPurchases: '我的购买',
-    leaderboardTitle: '排行榜',
-    leaderboardText: '活跃买家的奖杯。购买商品即可提升排名。',
+    leaderboardTitle: '推荐竞技场',
+    leaderboardText: '邀请好友，提升你的 MMR，并瓜分 2,000 TON 奖池。',
+    leaderboardHowItWorks: '玩法说明',
+    leaderboardHowItWorksText: '通过你的专属链接邀请好友，获取 MMR 并提升排行榜排名。赛季结束时，前 10 名参与者将从总奖池中获得奖励。',
+    leaderboardPrizePool: '奖池',
+    leaderboardDuration: '剩余时间',
+    leaderboardTableTitle: '排行榜',
+    leaderboardRankTitle: '段位',
+    leaderboardRankLabel: '段位',
+    leaderboardInvitesLabel: '邀请数',
+    leaderboardRewardLabel: '奖励',
     leaderboardYourStats: '你的数据',
     activationSite: '激活网站',
     activationKey: '密钥',
@@ -1418,7 +1466,10 @@ function UserAvatar({ user, size = 'normal' }) {
 function StoreLogoMark() {
   return (
     <span className="store-logo-mark" aria-hidden="true">
-      <img src="/grozers-launch-rocket.png" alt="" />
+      <svg viewBox="0 0 48 48" focusable="false">
+        <circle cx="24" cy="16" r="8.5" fill="currentColor" />
+        <path d="M10.5 39.5c0-8.5 5.9-14.7 13.5-14.7S37.5 31 37.5 39.5" fill="currentColor" />
+      </svg>
     </span>
   )
 }
@@ -1508,10 +1559,7 @@ function ProfilePanel({ user, text, orders, joinedAt, profileView, onProfileView
         <>
           <header className="profile-header-card">
             <UserAvatar user={user} size="large" />
-            <div>
-              <span>GrozersStore</span>
-              <h2>{telegramDisplayName(user, text.profileGuest)}</h2>
-            </div>
+            <h2>{telegramDisplayName(user, text.profileGuest)}</h2>
           </header>
           <div className="profile-stats-grid">
             <article>
@@ -1538,19 +1586,93 @@ function ProfilePanel({ user, text, orders, joinedAt, profileView, onProfileView
   )
 }
 
-function LeaderboardPanel({ text, orders, user }) {
+function LeaderboardPanel({ text, orders, user, language }) {
   const spentAmount = Number(orders.reduce((sum, order) => sum + (Number(order.price) || 0), 0).toFixed(2))
+  const [howItWorksOpen, setHowItWorksOpen] = useState(true)
 
   return (
     <section className="leaderboard-panel">
-      <div className="leaderboard-cup">🏆</div>
-      <p className="eyebrow">GrozersStore</p>
-      <h2>{text.leaderboardTitle}</h2>
-      <p>{text.leaderboardText}</p>
-      <article>
+      <header className="leaderboard-hero">
+        <div className="leaderboard-cup">🏆</div>
+        <div>
+          <p className="eyebrow">GrozersStore</p>
+          <h2>{text.leaderboardTitle}</h2>
+          <p>{text.leaderboardText}</p>
+        </div>
+      </header>
+
+      <div className="leaderboard-summary-grid">
+        <article className="leaderboard-summary-card accent">
+          <span>{text.leaderboardPrizePool}</span>
+          <strong>2 000 TON</strong>
+        </article>
+        <article className="leaderboard-summary-card">
+          <span>{text.leaderboardDuration}</span>
+          <strong>15 {language === 'ru' ? 'дней' : language === 'zh' ? '天' : 'days'}</strong>
+        </article>
+      </div>
+
+      <button
+        type="button"
+        className={`leaderboard-how-button${howItWorksOpen ? ' active' : ''}`}
+        onClick={() => setHowItWorksOpen((current) => !current)}
+      >
+        {text.leaderboardHowItWorks}
+      </button>
+
+      {howItWorksOpen ? (
+        <article className="leaderboard-how-panel">
+          <p>{text.leaderboardHowItWorksText}</p>
+        </article>
+      ) : null}
+
+      <section className="leaderboard-table-section">
+        <div className="section-head">
+          <h3>{text.leaderboardTableTitle}</h3>
+          <span>Top 10</span>
+        </div>
+        <div className="leaderboard-table">
+          <div className="leaderboard-table-row leaderboard-table-head">
+            <span>#</span>
+            <span>User</span>
+            <span>{text.leaderboardInvitesLabel}</span>
+            <span>MMR</span>
+            <span>{text.leaderboardRewardLabel}</span>
+          </div>
+          {leaderboardDemoRows.map((row) => (
+            <div className="leaderboard-table-row" key={row.place}>
+              <strong>{row.place}</strong>
+              <span>{row.user}</span>
+              <span>{row.invites}</span>
+              <span>{row.mmr}</span>
+              <span>{row.reward}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="leaderboard-ranks-section">
+        <div className="section-head">
+          <h3>{text.leaderboardRankTitle}</h3>
+          <span>Bronze → Mythic</span>
+        </div>
+        <div className="leaderboard-ranks-grid">
+          {leaderboardRankConfig.map((rank, index) => (
+            <article className="leaderboard-rank-card" key={rank.id}>
+              <span className="leaderboard-rank-badge" style={{ '--rank-color': rank.color }}>
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <strong>{rank.labels[language]}</strong>
+              <small>{rank.invites} invites</small>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <article className="leaderboard-personal-card">
         <span>{text.leaderboardYourStats}</span>
         <strong>{telegramDisplayName(user, text.profileGuest)}</strong>
-        <small>{orders.length} · {formatPrice(spentAmount)}</small>
+        <small>{orders.length} · {formatPrice(spentAmount)} · MMR 0</small>
       </article>
     </section>
   )
@@ -2060,7 +2182,7 @@ function StoreApp() {
           ) : null}
         </>
       ) : activeTab === 'leaderboard' ? (
-        <LeaderboardPanel text={text} orders={orders} user={telegramUser} />
+        <LeaderboardPanel text={text} orders={orders} user={telegramUser} language={language} />
       ) : activeTab === 'profile' ? (
         <ProfilePanel
           user={telegramUser}

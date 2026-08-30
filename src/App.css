@@ -495,29 +495,27 @@ body.modal-open {
   width: 38px;
   height: 38px;
   place-items: center;
-  border: 1px solid rgba(255, 159, 28, 0.9);
+  border: 3px solid rgba(255, 186, 77, 0.95);
   border-radius: 999px;
   padding: 0;
-  background: linear-gradient(135deg, #ff9f1c, #ffc46d);
-  color: #120802;
+  background: #050505;
+  color: #fff;
   cursor: pointer;
-  box-shadow: 0 10px 28px rgba(255, 159, 28, 0.24);
+  box-shadow: 0 10px 28px rgba(255, 159, 28, 0.24), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 }
 
 .store-logo-mark {
   display: grid;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   place-items: center;
-  border-radius: 999px;
-  background: #050505;
-  overflow: hidden;
+  color: #fff;
 }
 
-.store-logo-mark img {
+.store-logo-mark svg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  display: block;
 }
 
 .user-avatar {
@@ -550,7 +548,7 @@ body.modal-open {
   top: 42px;
   left: 0;
   display: grid;
-  width: 108px;
+  width: 124px;
   gap: 6px;
   padding: 0;
   background: transparent;
@@ -561,16 +559,16 @@ body.modal-open {
 
 .profile-entry-menu button {
   width: 100%;
-  min-height: 31px;
-  border: 1px solid rgba(255, 159, 28, 0.7);
-  border-radius: 0;
-  padding: 7px 9px;
-  background: #000;
+  min-height: 32px;
+  border: 0;
+  border-radius: 12px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.9);
   color: #fff;
   font-size: 11px;
   font-weight: 850;
   cursor: pointer;
-  box-shadow: none;
+  box-shadow: 0 0 0 1px rgba(255, 186, 77, 0.92) inset, 0 8px 18px rgba(0, 0, 0, 0.35);
 }
 
 .hero-controls {
@@ -1053,44 +1051,36 @@ body.modal-open {
 
 .profile-switcher button {
   min-height: 52px;
-  border: 1px solid rgba(255, 159, 28, 0.72);
-  border-radius: 0;
-  background: #000;
+  border: 0;
+  border-radius: 15px;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.98), rgba(3, 3, 3, 0.98));
   color: #fff;
   font-weight: 900;
   cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(255, 159, 28, 0.42) inset;
 }
 
 .profile-switcher button.active {
-  border-color: rgba(255, 224, 163, 0.92);
-  background: #000;
-  color: #ffcc73;
-  box-shadow: 0 0 0 1px rgba(255, 159, 28, 0.15) inset;
+  background: linear-gradient(135deg, rgba(255, 159, 28, 0.18), rgba(255, 159, 28, 0.08));
+  color: #ffe0a3;
+  box-shadow: 0 0 0 1px rgba(255, 186, 77, 0.85) inset;
 }
 
 .profile-header-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
   border: 1px solid rgba(255, 159, 28, 0.24);
-  border-radius: 12px;
-  padding: 14px;
+  border-radius: 16px;
+  padding: 18px 14px;
   background: rgba(255, 159, 28, 0.07);
-}
-
-.profile-header-card span,
-.leaderboard-panel > article span {
-  color: var(--blue-deep);
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  text-align: center;
 }
 
 .profile-header-card h2,
 .profile-orders-panel h2,
 .leaderboard-panel h2 {
-  margin: 4px 0 0;
+  margin: 0;
   color: #fff;
   font-size: 30px;
   line-height: 1.05;
@@ -1178,15 +1168,21 @@ body.modal-open {
 
 .leaderboard-panel {
   display: grid;
-  gap: 12px;
-  text-align: center;
+  gap: 14px;
+}
+
+.leaderboard-hero {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 10px 12px 0;
 }
 
 .leaderboard-cup {
   display: grid;
   width: 76px;
   height: 76px;
-  margin: 0 auto 4px;
   place-items: center;
   border: 1px solid rgba(255, 159, 28, 0.42);
   border-radius: 18px;
@@ -1196,7 +1192,7 @@ body.modal-open {
 }
 
 .leaderboard-panel .eyebrow {
-  margin: 0;
+  margin: 0 0 6px;
 }
 
 .leaderboard-panel h2 {
@@ -1204,24 +1200,164 @@ body.modal-open {
 }
 
 .leaderboard-panel p:not(.eyebrow) {
-  max-width: 420px;
-  margin: 0 auto;
+  max-width: 520px;
+  margin: 0;
   color: var(--muted);
+}
+
+.leaderboard-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.leaderboard-summary-card,
+.leaderboard-personal-card {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(255, 159, 28, 0.28);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(255, 159, 28, 0.07);
+}
+
+.leaderboard-summary-card.accent {
+  background: linear-gradient(135deg, rgba(161, 95, 255, 0.18), rgba(255, 159, 28, 0.08));
+}
+
+.leaderboard-summary-card span,
+.leaderboard-personal-card span,
+.leaderboard-how-panel p,
+.leaderboard-table-head span,
+.leaderboard-table-row span,
+.leaderboard-rank-card small,
+.leaderboard-panel > article small {
+  color: var(--muted);
+}
+
+.leaderboard-summary-card strong,
+.leaderboard-personal-card strong {
+  color: #fff;
+  font-size: 24px;
+}
+
+.leaderboard-how-button {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 14px;
+  padding: 11px 14px;
+  background: rgba(255, 159, 28, 0.12);
+  color: #ffe0a3;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(255, 159, 28, 0.35) inset;
+}
+
+.leaderboard-how-button.active {
+  background: rgba(255, 159, 28, 0.2);
+}
+
+.leaderboard-how-panel {
+  border: 1px solid rgba(255, 159, 28, 0.22);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(5, 5, 5, 0.7);
+}
+
+.leaderboard-table-section,
+.leaderboard-ranks-section {
+  display: grid;
+  gap: 10px;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.section-head h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+}
+
+.section-head span {
+  color: #ffe0a3;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.leaderboard-table {
+  display: grid;
+  gap: 8px;
+}
+
+.leaderboard-table-row {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1.4fr) 90px 88px 92px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(255, 159, 28, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: rgba(6, 6, 6, 0.72);
+}
+
+.leaderboard-table-head {
+  background: rgba(255, 159, 28, 0.08);
+  color: #ffe0a3;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.leaderboard-table-row strong,
+.leaderboard-rank-card strong {
+  color: #fff;
+}
+
+.leaderboard-ranks-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.leaderboard-rank-card {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 159, 28, 0.18);
+  border-radius: 14px;
+  padding: 14px 10px;
+  background: rgba(6, 6, 6, 0.72);
+  text-align: center;
+}
+
+.leaderboard-rank-badge {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rank-color) 28%, #050505);
+  color: color-mix(in srgb, var(--rank-color) 80%, white);
+  font-size: 12px;
+  font-weight: 950;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--rank-color) 72%, transparent) inset;
+}
+
+.leaderboard-personal-card {
+  margin-top: 2px;
 }
 
 .leaderboard-panel > article {
   margin-top: 10px;
   text-align: left;
-}
-
-.leaderboard-panel > article strong {
-  color: #fff;
-  font-size: 22px;
-}
-
-.leaderboard-panel > article small {
-  color: var(--blue-deep);
-  font-weight: 900;
 }
 
 .orders-list {
@@ -1890,6 +2026,13 @@ body.modal-open {
     padding: 58px 14px 14px;
   }
 
+  .profile-panel,
+  .leaderboard-panel {
+    width: 100%;
+    margin-top: 68px;
+    padding: 14px 12px;
+  }
+
   .profile-entry {
     top: 8px;
     left: 10px;
@@ -1907,6 +2050,51 @@ body.modal-open {
   .balance-pill strong {
     width: 20px;
     height: 20px;
+  }
+
+  .profile-switcher {
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .profile-switcher button {
+    min-height: 46px;
+    border-radius: 13px;
+    font-size: 12px;
+  }
+
+  .profile-header-card {
+    padding: 16px 12px;
+  }
+
+  .profile-header-card h2 {
+    font-size: 24px;
+  }
+
+  .profile-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .leaderboard-hero {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .leaderboard-panel p:not(.eyebrow) {
+    max-width: none;
+  }
+
+  .leaderboard-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .leaderboard-table-row {
+    min-width: 560px;
+  }
+
+  .leaderboard-ranks-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .hero-block h1 {
