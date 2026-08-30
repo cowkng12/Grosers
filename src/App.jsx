@@ -1663,20 +1663,6 @@ function LeaderboardPanel({ text, orders, user, language }) {
         <div className="arena-season-meta"><span><small>{arenaCopy.seasonPrize}</small><strong>2 000 TON</strong></span><span><small>{arenaCopy.seasonEnd}</small><strong>15 дней</strong></span></div>
       </article>
 
-      <section className="arena-squad-section">
-        <div className="arena-section-head"><h3>{arenaCopy.squad} (0/3)</h3><span>⏳ {arenaCopy.reset} 24:00</span></div>
-        <div className="arena-squad-grid">
-          <article className="arena-squad-card active"><span className="arena-slot-number">1</span><span className="arena-squad-avatar"><UserAvatar user={user} /></span><strong>{telegramDisplayName(user, text.profileGuest)}</strong><small>MMR 0 · {arenaCopy.invites}: 0</small></article>
-          <article className="arena-squad-card locked"><span className="arena-slot-number">2</span><span className="arena-lock">🔒</span><strong>{arenaCopy.emptySlot}</strong></article>
-          <article className="arena-squad-card locked"><span className="arena-slot-number">3</span><span className="arena-lock">🔒</span><strong>{arenaCopy.emptySlot}</strong></article>
-        </div>
-      </section>
-
-      <div className="arena-mode-switch"><button type="button" className="active">{arenaCopy.rating}</button><button type="button">{arenaCopy.unranked}</button></div>
-
-      <article className="arena-synergy-card"><h3>{arenaCopy.synergies}</h3><p>{arenaCopy.noSynergies}</p></article>
-      <button className="arena-scout-button" type="button">{arenaCopy.scout}</button>
-
       <button
         type="button"
         className={`leaderboard-how-button${howItWorksOpen ? ' active' : ''}`}
