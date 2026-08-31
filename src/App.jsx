@@ -1565,8 +1565,64 @@ function ProfilePanel({ user, text, orders, joinedAt, profileView, onProfileView
   )
 }
 
-function LeaderboardPanel() {
-  return null
+function LeaderboardPanel({ user, language }) {
+  const leaderboardLabels = {
+    ru: { season: 'Реферальная арена', subtitle: 'Приглашай друзей и поднимай свой ранг', rank: 'Твой ранг', score: 'MMR', pool: 'Призовой фонд сезона', ends: 'До конца сезона', how: 'Как это работает', howText: 'Приглашай друзей по своей ссылке, получай MMR и поднимайся в таблице лидеров.', ranks: 'Ранги', invite: 'Пригласить друзей' },
+    en: { season: 'Referral Arena', subtitle: 'Invite friends and climb the ranks', rank: 'Your rank', score: 'MMR', pool: 'Season prize pool', ends: 'Season ends in', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard.', ranks: 'Ranks', invite: 'Invite friends' },
+    zh: { season: '推荐竞技场', subtitle: '邀请好友，提升你的段位', rank: '你的段位', score: 'MMR', pool: '赛季奖池', ends: '赛季结束', how: '玩法说明', howText: '通过你的专属链接邀请好友，获取 MMR 并提升排名。', ranks: '段位', invite: '邀请好友' },
+  }
+  const labels = leaderboardLabels[language] || leaderboardLabels.ru
+  const ranks = [
+    { key: 'bronze', name: language === 'en' ? 'Bronze' : language === 'zh' ? '青铜' : 'Бронзовая', image: '/medal-bronze-1.png', color: '#c77b45' },
+    { key: 'silver', name: language === 'en' ? 'Silver' : language === 'zh' ? '白银' : 'Серебряная', image: '/medal-silver-1.png', color: '#c8d0dc' },
+    { key: 'gold', name: language === 'en' ? 'Gold' : language === 'zh' ? '黄金' : 'Золотая', image: '/medal-gold-1.png', color: '#f4bb38' },
+    { key: 'obsidian', name: language === 'en' ? 'Obsidian' : language === 'zh' ? '黑曜石' : 'Обсидиановая', image: '/medal-obsidian-1.png', color: '#a56cff' },
+    { key: 'mythic', name: language === 'en' ? 'Mythic' : language === 'zh' ? '神话' : 'Мифическая', image: '/medal-mythic-1.png', color: '#ff5f32' },
+  ]
+  const displayName = user?.username ? `@${user.username}` : user?.first_name || 'Player'
+
+  return (
+    <section className="leaderboard-panel leaderboard-arena-panel">
+      <header className="leaderboard-arena-header">
+        <div>
+          <span className="leaderboard-kicker">GrozersStore</span>
+          <h1 className="font-display">{labels.season}</h1>
+          <p>{labels.subtitle}</p>
+        </div>
+        <img className="leaderboard-trophy" src="/leaderboard-trophy.png" alt="" />
+      </header>
+      <div className="leaderboard-status-grid">
+        <article className="leaderboard-status-card leaderboard-rank-status">
+          <span>{labels.rank}</span>
+          <strong className="font-display">Silver 2</strong>
+          <small>{displayName}</small>
+        </article>
+        <article className="leaderboard-status-card">
+          <span>{labels.score}</span>
+          <strong className="font-number">1488</strong>
+          <small>{labels.ends}: 15d</small>
+        </article>
+        <article className="leaderboard-status-card leaderboard-pool-status">
+          <span>{labels.pool}</span>
+          <strong className="font-number">2 000 TON</strong>
+        </article>
+      </div>
+      <button type="button" className="leaderboard-how-button">{labels.how}</button>
+      <p className="leaderboard-how-copy">{labels.howText}</p>
+      <section className="leaderboard-ranks-showcase">
+        <h2 className="font-display">{labels.ranks}</h2>
+        <div className="leaderboard-rank-strip">
+          {ranks.map((rank) => (
+            <article className="leaderboard-rank-tile" key={rank.key} style={{ '--rank-accent': rank.color }}>
+              <img src={rank.image} alt="" />
+              <strong className="font-display">{rank.name}</strong>
+            </article>
+          ))}
+        </div>
+      </section>
+      <button type="button" className="leaderboard-invite-button">{labels.invite}</button>
+    </section>
+  )
 }
 
 function StoreApp() {
