@@ -1627,7 +1627,7 @@ function LeaderboardPanel({ user, language }) {
 
 function StoreApp() {
   const [selectedProduct, setSelectedProduct] = useState(products[0])
-  const [language, setLanguage] = useState('en')
+  const [language] = useState('en')
   const [activeTab, setActiveTab] = useState('catalog')
   const [profileView, setProfileView] = useState('profile')
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
@@ -1995,24 +1995,6 @@ function StoreApp() {
 
   return (
     <main className="page-shell">
-      <div className="hero-controls page-top-controls">
-        <button
-          type="button"
-          className="language-toggle store-language-toggle"
-          onClick={() => setLanguage((current) => languages[(languages.indexOf(current) + 1) % languages.length])}
-        >
-          {text.languageLabel}
-        </button>
-        <button
-          type="button"
-          className="balance-pill"
-          onClick={() => setIsTopUpPanelOpen(true)}
-        >
-          <span>{formatPrice(balance)}</span>
-          <strong>+</strong>
-        </button>
-      </div>
-
       {activeTab === 'catalog' ? (
         <section className="hero-block">
           <div className="profile-entry">
