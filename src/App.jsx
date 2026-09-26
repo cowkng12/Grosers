@@ -1567,11 +1567,13 @@ function ProfilePanel({ user, text, orders, joinedAt, profileView, onProfileView
 
 function LeaderboardPanel({ user, language }) {
   const leaderboardLabels = {
-    ru: { season: 'Реферальная арена', subtitle: 'Приглашай друзей и поднимай свой ранг', rank: 'Твой ранг', score: 'MMR', pool: 'Призовой фонд сезона', ends: 'До конца сезона', how: 'Как это работает', howText: 'Приглашай друзей по своей ссылке, получай MMR и поднимайся в таблице лидеров.', ranks: 'Ранги', invite: 'Пригласить друзей' },
-    en: { season: 'Referral Arena', subtitle: 'Invite friends and climb the ranks', rank: 'Your rank', score: 'MMR', pool: 'Season prize pool', ends: 'Season ends in', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard.', ranks: 'Ranks', invite: 'Invite friends' },
-    zh: { season: '推荐竞技场', subtitle: '邀请好友，提升你的段位', rank: '你的段位', score: 'MMR', pool: '赛季奖池', ends: '赛季结束', how: '玩法说明', howText: '通过你的专属链接邀请好友，获取 MMR 并提升排名。', ranks: '段位', invite: '邀请好友' },
+    ru: { season: 'Реферальная арена', subtitle: 'Приглашай друзей и поднимай свой ранг', rank: 'Твой ранг', score: 'MMR', pool: 'Призовой фонд сезона', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 100 participants receive rewards from the prize pool.', ranks: 'Ранги', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
+    en: { season: 'Referral Arena', subtitle: 'Invite friends and climb the ranks', rank: 'Your rank', score: 'MMR', pool: 'Season prize pool', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 100 participants receive rewards from the prize pool.', ranks: 'Ranks', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
+    zh: { season: '推荐竞技场', subtitle: '邀请好友，提升你的段位', rank: '你的段位', score: 'MMR', pool: '赛季奖池', how: '玩法说明', howText: '通过你的专属链接邀请好友，获取 MMR 并提升排名。赛季结束时，前 100 名参与者将获得奖池奖励。', ranks: '段位', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
   }
   const labels = leaderboardLabels[language] || leaderboardLabels.ru
+  const [isHowOpen, setIsHowOpen] = useState(false)
+  const displayName = user?.username ? '@' + user.username : user?.first_name || 'Player'
   const ranks = [
     { key: 'bronze', name: language === 'en' ? 'Bronze' : language === 'zh' ? '青铜' : 'Бронзовая', image: '/medal-bronze-1.png', color: '#c77b45' },
     { key: 'silver', name: language === 'en' ? 'Silver' : language === 'zh' ? '白银' : 'Серебряная', image: '/medal-silver-1.png', color: '#c8d0dc' },
@@ -1579,7 +1581,6 @@ function LeaderboardPanel({ user, language }) {
     { key: 'obsidian', name: language === 'en' ? 'Obsidian' : language === 'zh' ? '黑曜石' : 'Обсидиановая', image: '/medal-obsidian-1.png', color: '#a56cff' },
     { key: 'mythic', name: language === 'en' ? 'Mythic' : language === 'zh' ? '神话' : 'Мифическая', image: '/medal-mythic-1.png', color: '#ff5f32' },
   ]
-  const displayName = user?.username ? `@${user.username}` : user?.first_name || 'Player'
 
   return (
     <section className="leaderboard-panel leaderboard-arena-panel">
@@ -1591,24 +1592,32 @@ function LeaderboardPanel({ user, language }) {
         </div>
         <img className="leaderboard-trophy" src="/leaderboard-trophy.png" alt="" />
       </header>
-      <div className="leaderboard-status-grid">
-        <article className="leaderboard-status-card leaderboard-rank-status">
-          <span>{labels.rank}</span>
-          <strong className="font-display">Silver 2</strong>
-          <small>{displayName}</small>
+      <div className="leaderboard-feature-grid">
+        <article className="leaderboard-feature-card leaderboard-rank-feature">
+          <div>
+            <span>{labels.rank}</span>
+            <strong className="font-display">Silver 2</strong>
+            <b className="font-number">{labels.score}: 2000</b>
+            <small>{displayName}</small>
+          </div>
+          <img src="/leaderboard-bear-rank.png" alt="" />
         </article>
-        <article className="leaderboard-status-card">
-          <span>{labels.score}</span>
-          <strong className="font-number">1488</strong>
-          <small>{labels.ends}: 15d</small>
-        </article>
-        <article className="leaderboard-status-card leaderboard-pool-status">
+        <article className="leaderboard-feature-card leaderboard-pool-feature">
           <span>{labels.pool}</span>
-          <strong className="font-number">2 000 TON</strong>
+          <div className="leaderboard-pool-value">
+            <strong className="font-number">2 000</strong>
+            <span>TON</span>
+            <img src="/leaderboard-ton.png" alt="" />
+          </div>
         </article>
       </div>
-      <button type="button" className="leaderboard-how-button">{labels.how}</button>
-      <p className="leaderboard-how-copy">{labels.howText}</p>
+      <button type="button" className="leaderboard-primary-button">{labels.leaderboard}</button>
+      <button type="button" className="leaderboard-invite-button">{labels.invite}</button>
+      <button type="button" className={`leaderboard-how-button${isHowOpen ? ' active' : ''}`} onClick={() => setIsHowOpen((current) => !current)}>
+        <img src="/leaderboard-scroll.png" alt="" />
+        <span>{labels.how}</span>
+      </button>
+      {isHowOpen ? <p className="leaderboard-how-copy">{labels.howText}</p> : null}
       <section className="leaderboard-ranks-showcase">
         <h2 className="font-display">{labels.ranks}</h2>
         <div className="leaderboard-rank-strip">
@@ -1620,7 +1629,6 @@ function LeaderboardPanel({ user, language }) {
           ))}
         </div>
       </section>
-      <button type="button" className="leaderboard-invite-button">{labels.invite}</button>
     </section>
   )
 }

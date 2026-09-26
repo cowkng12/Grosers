@@ -2779,3 +2779,209 @@ body.modal-open {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Leaderboard visual treatment */
+.leaderboard-arena-panel {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  padding: 18px 10px 30px;
+  background: #0b0b0a;
+}
+
+.leaderboard-arena-header {
+  padding: 8px 8px 18px;
+  align-items: flex-start;
+}
+
+.leaderboard-arena-header h1 {
+  max-width: 330px;
+  margin: 4px 0 6px;
+  color: #fff;
+  font-size: clamp(2rem, 8vw, 3.15rem);
+  line-height: .92;
+  text-shadow: 2px 3px 0 rgba(0, 0, 0, .85), 0 0 16px rgba(255, 159, 28, .14);
+}
+
+.leaderboard-arena-header p {
+  max-width: 280px;
+  font-size: .95rem;
+  line-height: 1.25;
+}
+
+.leaderboard-trophy {
+  width: 92px;
+  height: 92px;
+  margin-top: 3px;
+}
+
+.leaderboard-feature-grid {
+  display: grid;
+  gap: 9px;
+}
+
+.leaderboard-feature-card {
+  min-height: 88px;
+  border: 1px solid rgba(255, 255, 255, .15);
+  border-radius: 12px;
+  padding: 12px;
+  background: #161616;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 12px 24px rgba(0,0,0,.18);
+}
+
+.leaderboard-feature-card > span,
+.leaderboard-feature-card small {
+  display: block;
+  color: #b8b8b8;
+  font-size: .73rem;
+  line-height: 1.1;
+}
+
+.leaderboard-rank-feature {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.leaderboard-rank-feature strong {
+  display: block;
+  margin-top: 5px;
+  color: #fff;
+  font-size: 1.65rem;
+  line-height: .9;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.7);
+}
+
+.leaderboard-rank-feature b {
+  display: block;
+  margin-top: 7px;
+  color: #fff;
+  font-size: 1.18rem;
+  line-height: 1;
+}
+
+.leaderboard-rank-feature small {
+  margin-top: 6px;
+}
+
+.leaderboard-rank-feature > img {
+  width: 92px;
+  height: 92px;
+  margin: -10px 3px -10px 12px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(255, 69, 0, .32));
+}
+
+.leaderboard-pool-feature {
+  min-height: 70px;
+}
+
+.leaderboard-pool-value {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  color: #ff9f1c;
+}
+
+.leaderboard-pool-value strong {
+  font-size: 1.45rem;
+  line-height: 1;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.6);
+}
+
+.leaderboard-pool-value > span {
+  font-family: var(--font-numbers);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.leaderboard-pool-value img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 5px rgba(255, 159, 28, .34));
+}
+
+.leaderboard-primary-button,
+.leaderboard-invite-button,
+.leaderboard-how-button {
+  width: 100%;
+  margin-top: 12px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  letter-spacing: .01em;
+  text-shadow: 1px 2px 0 rgba(0,0,0,.52);
+}
+
+.leaderboard-primary-button {
+  min-height: 58px;
+  border: 1px solid #ffb12e;
+  background: linear-gradient(180deg, #ffab0b, #f28b00);
+  color: #080604;
+  font-size: 1.7rem;
+  cursor: default;
+  box-shadow: 0 10px 24px rgba(255, 143, 0, .18), inset 0 1px 0 rgba(255,255,255,.2);
+}
+
+.leaderboard-invite-button {
+  min-height: 50px;
+  border: 1px solid #d77a11;
+  background: linear-gradient(180deg, #e79224, #bd5f09);
+  color: #1b0d02;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(205, 102, 8, .15), inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+.leaderboard-how-button {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #ffca70;
+  background: linear-gradient(180deg, #ffc267, #ffb34a);
+  color: #1b0d02;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(255, 177, 62, .13), inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+.leaderboard-how-button img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 3px rgba(0,0,0,.35));
+}
+
+.leaderboard-how-button span {
+  text-shadow: 1px 1px 0 rgba(255,255,255,.22);
+}
+
+.leaderboard-how-button.active {
+  background: linear-gradient(180deg, #ffcf85, #f5a93b);
+}
+
+.leaderboard-how-copy {
+  margin: 8px 4px 0;
+  padding: 11px 12px;
+  border: 1px solid rgba(255, 177, 62, .25);
+  border-radius: 10px;
+  background: rgba(255, 177, 62, .07);
+}
+
+@media (max-width: 560px) {
+  .leaderboard-arena-panel {
+    padding-inline: 8px;
+  }
+
+  .leaderboard-arena-header {
+    padding-inline: 7px;
+  }
+
+  .leaderboard-trophy {
+    width: 82px;
+    height: 82px;
+  }
+}
