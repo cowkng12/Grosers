@@ -17,15 +17,19 @@ services:
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_BOT_USERNAME
-        value: "@GrozersStore_bot"
+        value: "@OminiHub_bot"
       - key: ADMIN_CHAT_ID
         sync: false
       - key: SELLER_URL
         sync: false
       - key: SUPPORT_BOT_URL
         sync: false
+      - key: SUPPORT_BOT_USERNAME
+        sync: false
       - key: REQUIRED_CHANNEL_USERNAME
         value: "@GrozersStore"
+      - key: REQUIRED_CHANNEL_ID
+        sync: false
       - key: REQUIRED_CHANNEL_URL
         value: https://t.me/GrozersStore
       - key: SKIP_CHANNEL_CHECK
@@ -50,5 +54,15 @@ services:
         sync: false
       - key: SUPABASE_STORE_KEY
         value: grozersstore
+      - key: STORE_FILE_PATH
+        value: ./data/store.json
       - key: ACCOUNT_DELIVERY_THRESHOLD
-        value: "0.1"
+        value: "1"
+      - key: KEEP_ALIVE_ENABLED
+        value: "true"
+      - key: KEEP_ALIVE_URL
+        sync: false
+      - key: KEEP_ALIVE_INTERVAL_MS
+        value: "300000"
+      - key: MAINTENANCE_MODE
+        value: "false"

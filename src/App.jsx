@@ -1627,7 +1627,7 @@ function LeaderboardPanel({ user, language }) {
 
 function StoreApp() {
   const [selectedProduct, setSelectedProduct] = useState(products[0])
-  const [language] = useState('en')
+  const [language, setLanguage] = useState('en')
   const [activeTab, setActiveTab] = useState('catalog')
   const [profileView, setProfileView] = useState('profile')
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
@@ -1683,6 +1683,22 @@ function StoreApp() {
   const visibleProducts = activeGroup === 'Все'
     ? products
     : products.filter((product) => product.group === activeGroup)
+
+  function closeMiniApp() {
+    const telegramApp = window.Telegram?.WebApp
+
+    if (telegramApp?.close) {
+      telegramApp.close()
+      return
+    }
+
+    if (window.history.length > 1) {
+      window.history.back()
+      return
+    }
+
+    window.location.assign('/')
+  }
 
   useEffect(() => {
     const telegramApp = window.Telegram?.WebApp
@@ -1997,6 +2013,24 @@ function StoreApp() {
     <main className="page-shell">
       {activeTab === 'catalog' ? (
         <section className="hero-block">
+          <div className="store-top-actions">
+            <button
+              type="button"
+              className="store-language-toggle"
+              aria-label={language === 'ru' ? 'Сменить язык' : language === 'zh' ? '切换语言' : 'Change language'}
+              onClick={() => setLanguage((current) => languages[(languages.indexOf(current) + 1) % languages.length])}
+            >
+              {text.languageLabel}
+            </button>
+            <button
+              type="button"
+              className="store-close-button"
+              aria-label={language === 'ru' ? 'Закрыть приложение' : language === 'zh' ? '关闭应用' : 'Close app'}
+              onClick={closeMiniApp}
+            >
+              ×
+            </button>
+          </div>
           <div className="profile-entry">
             <button
               type="button"

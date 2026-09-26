@@ -52,7 +52,7 @@ ADMIN_CHAT_ID=ваш_telegram_id
 WEB_APP_URL=https://ваш-render-url
 SELLER_URL=https://t.me/metifrysell
 CRYPTO_PAY_TOKEN=токен_CryptoBot
-ACCOUNT_DELIVERY_THRESHOLD=0.1
+ACCOUNT_DELIVERY_THRESHOLD=1
 ACTIVATION_SITE_URL=https://ваш-render-url/activate
 ```
 

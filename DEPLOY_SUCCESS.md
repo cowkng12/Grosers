@@ -21,8 +21,8 @@
 
 ### 2. Environment Variables
 ✅ **NODE_ENV** = production
-✅ **TELEGRAM_BOT_TOKEN** = 8943651691:AAHxXhPySHhwOcQweTxf8_uLRpkMQa5KQBw
-✅ **TELEGRAM_BOT_USERNAME** = @GrozersStore_bot
+✅ **TELEGRAM_BOT_TOKEN** = задан в Render Environment
+✅ **TELEGRAM_BOT_USERNAME** = @OminiHub_bot
 ✅ **ADMIN_CHAT_ID** = 8781709394
 ✅ **WEB_APP_URL** = https://grozersstore-miniapp.onrender.com
 ✅ **ACTIVATION_SITE_URL** = https://grozersstore-miniapp.onrender.com/activate
@@ -54,7 +54,7 @@
 3. **Активация:** https://grozersstore-miniapp.onrender.com/activate
    - Страница для активации ключей
 
-4. **Telegram Bot:** https://t.me/GrozersStore_bot
+4. **Telegram Bot:** https://t.me/OminiHub_bot
    - Нажми `/start` - должно открыться меню
 
 ---
@@ -65,7 +65,7 @@
 Отправь @BotFather:
 ```
 /setmenubutton
-@GrozersStore_bot
+@OminiHub_bot
 ```
 Затем:
 - **Текст кнопки:** Open
@@ -138,7 +138,7 @@ git push
 
 - [ ] Открыть https://grozersstore-miniapp.onrender.com
 - [ ] Проверить /health endpoint
-- [ ] Открыть @GrozersStore_bot
+- [ ] Открыть @OminiHub_bot
 - [ ] Нажать /start в боте
 - [ ] Проверить, что меню открывается
 - [ ] Настроить Web App кнопку через @BotFather

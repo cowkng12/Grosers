@@ -67,14 +67,18 @@ SUPABASE_SERVICE_ROLE_KEY=<ваш_service_role_key>
 Эти значения уже есть в `render.yaml` и их можно не менять:
 
 - `NODE_ENV=production`
-- `TELEGRAM_BOT_USERNAME=@GrozersStore_bot`
+- `TELEGRAM_BOT_USERNAME=@OminiHub_bot`
 - `CRYPTO_PAY_API_URL=https://pay.crypt.bot/api`
 - `CRYPTO_PAY_ASSET=USDT`
 - `TON_USD_RATE=1.31`
 - `WALLET_PAY_TON_ADDRESS=...`
 - `WALLET_PAY_TRC20_ADDRESS=...`
 - `SUPABASE_STORE_KEY=grozersstore`
-- `ACCOUNT_DELIVERY_THRESHOLD=0.1`
+- `ACCOUNT_DELIVERY_THRESHOLD=1`
+- `KEEP_ALIVE_ENABLED=true`
+- `MAINTENANCE_MODE=false`
+
+Blueprint попросит значения переменных с `sync: false`. Вставляйте только актуальные данные нужного бота. Для постоянного хранения заказов, балансов и ключей настройте Supabase до запуска продаж.
 
 ---
 
@@ -111,7 +115,7 @@ create table if not exists app_store (
 ```
 /newbot
 Название: GrozersStore
-Username: GrozersStore_bot
+Username: OminiHub_bot
 ```
 
 ### 2. Получите токен и добавьте в `TELEGRAM_BOT_TOKEN`
@@ -120,7 +124,7 @@ Username: GrozersStore_bot
 
 ```
 /setmenubutton
-@GrozersStore_bot
+@OminiHub_bot
 Текст кнопки: Open
 URL: https://grozersstore-miniapp.onrender.com
 ```
@@ -145,7 +149,7 @@ URL: https://grozersstore-miniapp.onrender.com
 3. **Activation Page:** https://grozersstore-miniapp.onrender.com/activate
    - Страница активации ключей
 
-4. **Telegram Bot:** Откройте `@GrozersStore_bot` и нажмите `/start`
+4. **Telegram Bot:** Откройте `@OminiHub_bot` и нажмите `/start`
 
 ---
 

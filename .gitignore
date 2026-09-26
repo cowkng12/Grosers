@@ -12,6 +12,7 @@ data
 dist
 dist-ssr
 .env
+.env.render
 factory/*.env
 *.local
 

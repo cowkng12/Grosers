@@ -595,9 +595,44 @@
   right: 18px;
 }
 
-.store-language-toggle {
-  position: static;
-  box-shadow: none;
+.store-top-actions {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.store-language-toggle,
+.store-close-button {
+  display: grid;
+  min-width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 159, 28, 0.34);
+  border-radius: 999px;
+  padding: 0 11px;
+  background: rgba(0, 0, 0, 0.88);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.store-close-button {
+  width: 38px;
+  padding: 0;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.store-language-toggle:hover,
+.store-close-button:hover {
+  border-color: rgba(255, 186, 77, 0.9);
+  background: #17100a;
 }
 
 body.modal-open {
@@ -2482,6 +2517,22 @@ body.modal-open {
   .profile-entry {
     top: 8px;
     left: 10px;
+  }
+
+  .store-top-actions {
+    top: 8px;
+    right: 10px;
+    gap: 6px;
+  }
+
+  .store-language-toggle,
+  .store-close-button {
+    min-width: 40px;
+    height: 40px;
+  }
+
+  .store-close-button {
+    width: 40px;
   }
 
   .profile-avatar-button {

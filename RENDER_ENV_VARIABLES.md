@@ -9,12 +9,12 @@ production
 
 ### 2. TELEGRAM_BOT_TOKEN ⚠️ ВАЖНО!
 ```
-8943651691:AAHxXhPySHhwOcQweTxf8_uLRpkMQa5KQBw
+<токен_от_BotFather>
 ```
 
 ### 3. TELEGRAM_BOT_USERNAME
 ```
-@GrozersStore_bot
+@OminiHub_bot
 ```
 
 ### 4. ADMIN_CHAT_ID
@@ -117,8 +117,8 @@ TJDqXkQx5nqFhq7RNtySUMCYTZ5Hk96o3G
 
 ```env
 NODE_ENV=production
-TELEGRAM_BOT_TOKEN=8943651691:AAHxXhPySHhwOcQweTxf8_uLRpkMQa5KQBw
-TELEGRAM_BOT_USERNAME=@GrozersStore_bot
+TELEGRAM_BOT_TOKEN=<токен_от_BotFather>
+TELEGRAM_BOT_USERNAME=@OminiHub_bot
 ADMIN_CHAT_ID=8781709394
 WEB_APP_URL=https://grozersstore-miniapp.onrender.com
 ACTIVATION_SITE_URL=https://grozersstore-miniapp.onrender.com/activate
