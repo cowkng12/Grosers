@@ -1574,14 +1574,6 @@ function LeaderboardPanel({ user, language }) {
   const labels = leaderboardLabels[language] || leaderboardLabels.ru
   const [isHowOpen, setIsHowOpen] = useState(false)
   const displayName = user?.username ? '@' + user.username : user?.first_name || 'Player'
-  const ranks = [
-    { key: 'bronze', name: language === 'en' ? 'Bronze' : language === 'zh' ? '青铜' : 'Бронзовая', image: '/medal-bronze-1.png', color: '#c77b45' },
-    { key: 'silver', name: language === 'en' ? 'Silver' : language === 'zh' ? '白银' : 'Серебряная', image: '/medal-silver-1.png', color: '#c8d0dc' },
-    { key: 'gold', name: language === 'en' ? 'Gold' : language === 'zh' ? '黄金' : 'Золотая', image: '/medal-gold-1.png', color: '#f4bb38' },
-    { key: 'obsidian', name: language === 'en' ? 'Obsidian' : language === 'zh' ? '黑曜石' : 'Обсидиановая', image: '/medal-obsidian-1.png', color: '#a56cff' },
-    { key: 'mythic', name: language === 'en' ? 'Mythic' : language === 'zh' ? '神话' : 'Мифическая', image: '/medal-mythic-1.png', color: '#ff5f32' },
-  ]
-
   return (
     <section className="leaderboard-panel leaderboard-arena-panel">
       <header className="leaderboard-arena-header">
@@ -1618,17 +1610,6 @@ function LeaderboardPanel({ user, language }) {
         <span>{labels.how}</span>
       </button>
       {isHowOpen ? <p className="leaderboard-how-copy">{labels.howText}</p> : null}
-      <section className="leaderboard-ranks-showcase">
-        <h2 className="font-display">{labels.ranks}</h2>
-        <div className="leaderboard-rank-strip">
-          {ranks.map((rank) => (
-            <article className="leaderboard-rank-tile" key={rank.key} style={{ '--rank-accent': rank.color }}>
-              <img src={rank.image} alt="" />
-              <strong className="font-display">{rank.name}</strong>
-            </article>
-          ))}
-        </div>
-      </section>
     </section>
   )
 }

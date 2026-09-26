@@ -2985,3 +2985,52 @@ body.modal-open {
     height: 82px;
   }
 }
+
+
+/* Compact leaderboard plates */
+.leaderboard-feature-card {
+  background: #171717;
+}
+
+.leaderboard-rank-feature {
+  min-height: 82px;
+}
+
+.leaderboard-pool-feature {
+  min-height: 64px;
+}
+
+.leaderboard-rank-feature > img {
+  width: 82px;
+  height: 82px;
+}
+
+.leaderboard-primary-button,
+.leaderboard-invite-button,
+.leaderboard-how-button {
+  min-height: 48px;
+  margin-top: 9px;
+  background: linear-gradient(180deg, #ffad24, #f28d08);
+  border-color: #ffb238;
+  color: #170b02;
+  box-shadow: 0 7px 16px rgba(255, 143, 0, .14), inset 0 1px 0 rgba(255,255,255,.24);
+}
+
+.leaderboard-primary-button {
+  min-height: 54px;
+  font-size: 1.55rem;
+}
+
+.leaderboard-invite-button,
+.leaderboard-how-button {
+  font-size: 1rem;
+}
+
+.leaderboard-how-button img {
+  width: 34px;
+  height: 34px;
+}
+
+.leaderboard-how-button.active {
+  background: linear-gradient(180deg, #ffad24, #f28d08);
+}
