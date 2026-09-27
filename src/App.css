@@ -691,13 +691,80 @@ body.modal-open {
   width: 38px;
   height: 38px;
   place-items: center;
-  border: 3px solid rgba(255, 186, 77, 0.95);
+  border: 0;
   border-radius: 999px;
   padding: 0;
   background: #050505;
   color: #fff;
   cursor: pointer;
-  box-shadow: 0 10px 28px rgba(255, 159, 28, 0.24), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  box-shadow: 0 10px 28px rgba(255, 159, 28, 0.18);
+}
+
+.wallet-panel {
+  display: grid;
+  gap: 12px;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.wallet-panel-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.wallet-panel-header span,
+.wallet-panel-balance {
+  color: var(--muted);
+}
+
+.wallet-panel-header strong {
+  color: #ff9f1c;
+  font-family: var(--font-numbers);
+  font-size: 1.8rem;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .6);
+}
+
+.wallet-panel-balance {
+  margin: 0;
+  font-size: .82rem;
+}
+
+.wallet-connect-button,
+.wallet-topup-button {
+  min-height: 48px;
+  border: 1px solid #ff9f1c;
+  border-radius: 10px;
+  padding: 12px 16px;
+  background: #ff9f1c;
+  color: #120a03;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.wallet-connect-button:disabled {
+  border-color: rgba(255, 159, 28, .42);
+  background: rgba(255, 159, 28, .14);
+  color: rgba(255, 224, 163, .72);
+  cursor: not-allowed;
+}
+
+.wallet-topup-button {
+  background: transparent;
+  color: #ff9f1c;
+}
+
+.wallet-connect-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.4;
 }
 
 .store-logo-mark {

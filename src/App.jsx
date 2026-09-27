@@ -376,7 +376,7 @@ const translations = {
     success: 'Заявка отправлена. В течение 5 минут с вами свяжется менеджер, ожидайте.',
     error: 'Не удалось отправить заявку. Проверь backend и попробуй снова.',
     allGroup: 'Все',
-    tabs: { catalog: 'Каталог', leaderboard: 'LeaderBoard', wallet: 'Wallet' },
+    tabs: { catalog: 'Каталог', leaderboard: 'Гонка', roulette: 'Рулетка', wallet: 'Кошелек' },
     ordersTitle: 'Мои покупки',
     ordersText: 'Пока вы не совершили ни одной покупки.',
     profileButton: 'Profile',
@@ -412,6 +412,11 @@ const translations = {
     walletPayReview: 'Заявка отправлена. Мы проверим транзакцию и зачислим баланс.',
     walletNotConfigured: 'Оплата на кошелек пока не настроена.',
     walletNetwork: 'Сеть оплаты',
+    walletTitle: 'Кошелек',
+    walletBalance: 'Баланс',
+    walletConnect: 'Подключить кошелек',
+    walletConnected: 'Кошелек подключен',
+    walletConnectHint: 'Подключение TON-кошелька будет доступно после добавления TON Connect.',
     confirmPurchase: ({ product, price }) => `Подтвердить покупку ${product} за $${price}?`,
     topUpSuccess: 'Успешно, в течении 10-и минут вам напишет менеджер, чтобы выдать товар. Ожидайте.',
     topUpError: 'Не удалось создать ссылку на оплату. Попробуйте позже.',
@@ -507,7 +512,7 @@ const translations = {
     success: 'Request sent. A manager will contact you within 5 minutes, please wait.',
     error: 'Could not send the request. Check backend and try again.',
     allGroup: 'All',
-    tabs: { catalog: 'Catalog', leaderboard: 'LeaderBoard', wallet: 'Wallet' },
+    tabs: { catalog: 'Catalog', leaderboard: 'Race', roulette: 'Roulette', wallet: 'Wallet' },
     ordersTitle: 'My purchases',
     ordersText: 'You have not made any purchases yet.',
     profileButton: 'Profile',
@@ -543,6 +548,11 @@ const translations = {
     walletPayReview: 'Request sent. We will verify the transaction and credit your balance.',
     walletNotConfigured: 'Wallet payments are not configured yet.',
     walletNetwork: 'Payment network',
+    walletTitle: 'Wallet',
+    walletBalance: 'Balance',
+    walletConnect: 'Connect wallet',
+    walletConnected: 'Wallet connected',
+    walletConnectHint: 'TON wallet connection will be available after TON Connect is added.',
     confirmPurchase: ({ product, price }) => `Confirm purchase of ${product} for $${price}?`,
     topUpSuccess: 'Success. A manager will message you within 10 minutes to deliver the product. Please wait.',
     topUpError: 'Could not create a payment link. Try again later.',
@@ -638,7 +648,7 @@ const translations = {
     success: '申请已提交。经理将在 5 分钟内联系你，请稍候。',
     error: '请求发送失败。请检查后端并重试。',
     allGroup: '全部',
-    tabs: { catalog: '目录', leaderboard: '排行榜', wallet: 'Wallet' },
+    tabs: { catalog: '目录', leaderboard: '竞赛', roulette: '转盘', wallet: '钱包' },
     ordersTitle: '我的购买',
     ordersText: '你还没有任何购买记录。',
     profileButton: 'Profile',
@@ -674,6 +684,11 @@ const translations = {
     walletPayReview: '请求已发送。我们会检查交易并充值余额。',
     walletNotConfigured: '钱包支付尚未配置。',
     walletNetwork: '支付网络',
+    walletTitle: '钱包',
+    walletBalance: '余额',
+    walletConnect: '连接钱包',
+    walletConnected: '钱包已连接',
+    walletConnectHint: '添加 TON Connect 后即可连接 TON 钱包。',
     confirmPurchase: ({ product, price }) => `确认以 $${price} 购买 ${product}？`,
     topUpSuccess: '支付成功。经理会在 10 分钟内联系你并发放商品，请稍候。',
     topUpError: '无法创建付款链接。请稍后再试。',
@@ -1561,9 +1576,9 @@ function ProfilePanel({ user, text, orders, joinedAt, profileView, onProfileView
 
 function LeaderboardPanel({ language }) {
   const leaderboardLabels = {
-    ru: { season: 'Реферальная арена', subtitle: 'Приглашай друзей и поднимай свой ранг', rank: 'Твой ранг', score: 'MMR', pool: 'Призовой фонд сезона', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 100 participants receive rewards from the prize pool.', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
-    en: { season: 'Referral Arena', subtitle: 'Invite friends and climb the ranks', rank: 'Your rank', score: 'MMR', pool: 'Season prize pool', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 100 participants receive rewards from the prize pool.', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
-    zh: { season: '推荐竞技场', subtitle: '邀请好友，提升你的段位', rank: '你的段位', score: 'MMR', pool: '赛季奖池', how: '玩法说明', howText: '通过你的专属链接邀请好友，获取 MMR 并提升排名。赛季结束时，前 100 名参与者将获得奖池奖励。', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
+    ru: { season: 'Реферальная арена', subtitle: 'Приглашай друзей и поднимай свой ранг', rank: 'Твой ранг', score: 'MMR', pool: 'Призовой фонд сезона', how: 'Как это работает', howText: 'Приглашай друзей по своей ссылке, набирай MMR и поднимайся в таблице лидеров. В конце сезона 100 лучших участников получат награды из призового фонда.', invite: 'Пригласить друзей', leaderboard: 'Гонка' },
+    en: { season: 'Referral Arena', subtitle: 'Invite friends and climb the ranks', rank: 'Your rank', score: 'MMR', pool: 'Season prize pool', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season, the top 100 participants receive rewards from the prize pool.', invite: 'Invite friends', leaderboard: 'Race' },
+    zh: { season: '推荐竞技场', subtitle: '邀请好友，提升你的段位', rank: '你的段位', score: 'MMR', pool: '赛季奖池', how: '玩法说明', howText: '通过你的专属邀请链接邀请好友，获取 MMR 并提升排名。赛季结束时，排名前 100 的参与者将获得奖池奖励。', invite: '邀请好友', leaderboard: '竞赛' },
   }
   const labels = leaderboardLabels[language] || leaderboardLabels.ru
   const [isHowOpen, setIsHowOpen] = useState(false)
@@ -1658,8 +1673,8 @@ function StoreApp() {
   const bottomTabs = [
     ['catalog', text.tabs.catalog],
     ['leaderboard', text.tabs.leaderboard],
-    ['roulette', rouletteCopy.tab],
-    ['wallet', text.tabs.wallet],
+    ['roulette', text.tabs.roulette || rouletteCopy.tab],
+    ['wallet', `${text.tabs.wallet}: ${formatPrice(balance)}`],
   ]
   const availableRouletteCoupons = Array.isArray(rouletteSpin?.coupons)
     ? rouletteSpin.coupons.filter((coupon) => coupon?.code && !coupon.usedAt)
@@ -2121,8 +2136,19 @@ function StoreApp() {
           activationUrl={activationUrl}
         />
       ) : activeTab === 'wallet' ? (
-        <section className="empty-panel wallet-panel">
-          <h2>Wallet</h2>
+        <section className="wallet-panel">
+          <header className="wallet-panel-header">
+            <span>{text.walletTitle}</span>
+            <strong>{formatPrice(balance)}</strong>
+          </header>
+          <p className="wallet-panel-balance">{text.walletBalance}</p>
+          <button type="button" className="wallet-connect-button" disabled>
+            {text.walletConnect}
+          </button>
+          <p className="wallet-connect-hint">{text.walletConnectHint}</p>
+          <button type="button" className="wallet-topup-button" onClick={() => setIsTopUpPanelOpen(true)}>
+            {text.topUpTitle}
+          </button>
         </section>
       ) : (
         <RoulettePanel
