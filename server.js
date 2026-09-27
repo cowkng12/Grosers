@@ -172,6 +172,7 @@ const roulettePrizes = [
   { id: 'chatgpt-plus', type: 'product', productId: 'chatgpt-plus-ready', weight: 2 },
   { id: 'cursor-pro', type: 'product', productId: 'cursor-pro', weight: 0.2 },
   { id: 'claude-pro', type: 'product', productId: 'claude-pro', weight: 0.05 },
+  { id: 'gemini-ultra', type: 'product', productId: 'gemini-ultra', weight: 0.02 },
 ]
 const rouletteSpinPromoCodes = {
   CLAUDE100: { code: 'CLAUDE100', prizeId: 'claude-pro', adminOnly: true, unlimited: true },

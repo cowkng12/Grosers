@@ -1174,7 +1174,7 @@ body.modal-open {
 
 .topup-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -2385,7 +2385,7 @@ body.modal-open {
   left: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
   border-top: 1px solid rgba(255, 159, 28, 0.2);
@@ -2861,6 +2861,13 @@ body.modal-open {
   line-height: 1;
 }
 
+.leaderboard-rank-feature .leaderboard-mmr {
+  color: #ff9f1c;
+  font-size: 1rem;
+  letter-spacing: .08em;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .72), 0 0 12px rgba(255, 159, 28, .28);
+}
+
 .leaderboard-rank-feature small {
   margin-top: 6px;
 }
@@ -2922,7 +2929,7 @@ body.modal-open {
   border: 1px solid #ffbf3f;
   border-radius: 24px;
   padding: 14px 8px;
-  background: #ffae19;
+  background: #ff9f1c;
   color: #080604;
   font-family: var(--font-display);
   font-size: clamp(.9rem, 3.2vw, 1.2rem);

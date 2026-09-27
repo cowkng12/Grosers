@@ -337,6 +337,7 @@ const roulettePrizes = [
   { id: 'chatgpt-plus', icon: 'GPT', image: '/chatgpt-logo-white.png', labels: { ru: 'ChatGPT Plus', en: 'ChatGPT Plus', zh: 'ChatGPT Plus' } },
   { id: 'cursor-pro', icon: 'CR', image: '/cursor-logo-white.png', labels: { ru: 'Cursor Pro', en: 'Cursor Pro', zh: 'Cursor Pro' } },
   { id: 'claude-pro', icon: 'CL', image: '/claude-logo-white.png', labels: { ru: 'Claude Pro', en: 'Claude Pro', zh: 'Claude Pro' } },
+  { id: 'gemini-ultra', icon: 'GM', image: '', labels: { ru: 'Gemini Ultra', en: 'Gemini Ultra', zh: 'Gemini Ultra' } },
 ]
 const rouletteReelPrizes = Array.from({ length: 40 }, () => roulettePrizes).flat()
 
@@ -375,7 +376,7 @@ const translations = {
     success: 'Заявка отправлена. В течение 5 минут с вами свяжется менеджер, ожидайте.',
     error: 'Не удалось отправить заявку. Проверь backend и попробуй снова.',
     allGroup: 'Все',
-    tabs: { catalog: 'Каталог', leaderboard: 'LeaderBoard' },
+    tabs: { catalog: 'Каталог', leaderboard: 'LeaderBoard', wallet: 'Wallet' },
     ordersTitle: 'Мои покупки',
     ordersText: 'Пока вы не совершили ни одной покупки.',
     profileButton: 'Profile',
@@ -506,7 +507,7 @@ const translations = {
     success: 'Request sent. A manager will contact you within 5 minutes, please wait.',
     error: 'Could not send the request. Check backend and try again.',
     allGroup: 'All',
-    tabs: { catalog: 'Catalog', leaderboard: 'LeaderBoard' },
+    tabs: { catalog: 'Catalog', leaderboard: 'LeaderBoard', wallet: 'Wallet' },
     ordersTitle: 'My purchases',
     ordersText: 'You have not made any purchases yet.',
     profileButton: 'Profile',
@@ -637,7 +638,7 @@ const translations = {
     success: '申请已提交。经理将在 5 分钟内联系你，请稍候。',
     error: '请求发送失败。请检查后端并重试。',
     allGroup: '全部',
-    tabs: { catalog: '目录', leaderboard: '排行榜' },
+    tabs: { catalog: '目录', leaderboard: '排行榜', wallet: 'Wallet' },
     ordersTitle: '我的购买',
     ordersText: '你还没有任何购买记录。',
     profileButton: 'Profile',
@@ -1399,7 +1400,6 @@ function RoulettePanel({ language, spin, canSpin, cooldownRemainingMs, isSpinnin
         <button className="roulette-spin-button" type="button" disabled={(!canSpin && !promoCode.trim()) || isSpinning} onClick={onSpin}>
           <span>{isSpinning ? copy.spinning : canSpin || promoCode.trim() ? copy.spin : `${copy.used} ${formatRouletteCooldown(cooldownRemainingMs)}`}</span>
         </button>
-        {!canSpin && cooldownRemainingMs > 0 ? <p className="roulette-cooldown">{copy.cooldown}: <strong>{formatRouletteCooldown(cooldownRemainingMs)}</strong></p> : null}
       </div>
       {error ? <p className="roulette-error">{error}</p> : null}
 
@@ -1442,17 +1442,6 @@ function UserAvatar({ user, size = 'normal' }) {
   )
 }
 
-function StoreLogoMark() {
-  return (
-    <span className="store-logo-mark" aria-hidden="true">
-      <svg viewBox="0 0 48 48" focusable="false">
-        <circle cx="24" cy="16" r="8.5" fill="currentColor" />
-        <path d="M10.5 39.5c0-8.5 5.9-14.7 13.5-14.7S37.5 31 37.5 39.5" fill="currentColor" />
-      </svg>
-    </span>
-  )
-}
-
 function TabIcon({ tab }) {
   return (
     <span className="tab-icon" aria-hidden="true">
@@ -1468,6 +1457,11 @@ function TabIcon({ tab }) {
           <path d="M15 8h18v8c0 7-4 12-9 12s-9-5-9-12V8Z" fill="currentColor" />
           <path d="M15 12H8v4c0 4.8 3.2 8 8 8M33 12h7v4c0 4.8-3.2 8-8 8" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
           <path d="M24 28v7M16 40h16M20 35h8" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="4" />
+        </svg>
+      ) : tab === 'wallet' ? (
+        <svg viewBox="0 0 48 48" focusable="false">
+          <path d="M7 14h30a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H11a4 4 0 0 1-4-4V14Z" fill="none" stroke="currentColor" strokeWidth="4" />
+          <path d="M7 14V10a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v4M29 27h8" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="4" />
         </svg>
       ) : (
         <svg viewBox="0 0 48 48" focusable="false">
@@ -1565,7 +1559,7 @@ function ProfilePanel({ user, text, orders, joinedAt, profileView, onProfileView
   )
 }
 
-function LeaderboardPanel({ user, language }) {
+function LeaderboardPanel({ language }) {
   const leaderboardLabels = {
     ru: { season: 'Реферальная арена', subtitle: 'Приглашай друзей и поднимай свой ранг', rank: 'Твой ранг', score: 'MMR', pool: 'Призовой фонд сезона', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 100 participants receive rewards from the prize pool.', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
     en: { season: 'Referral Arena', subtitle: 'Invite friends and climb the ranks', rank: 'Your rank', score: 'MMR', pool: 'Season prize pool', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 100 participants receive rewards from the prize pool.', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
@@ -1573,12 +1567,10 @@ function LeaderboardPanel({ user, language }) {
   }
   const labels = leaderboardLabels[language] || leaderboardLabels.ru
   const [isHowOpen, setIsHowOpen] = useState(false)
-  const displayName = user?.username ? '@' + user.username : user?.first_name || 'Player'
   return (
     <section className="leaderboard-panel leaderboard-arena-panel">
       <header className="leaderboard-arena-header">
         <div>
-          <span className="leaderboard-kicker">GrozersStore</span>
           <h1 className="font-display">{labels.season}</h1>
           <p>{labels.subtitle}</p>
         </div>
@@ -1589,16 +1581,14 @@ function LeaderboardPanel({ user, language }) {
           <div>
             <span>{labels.rank}</span>
             <strong className="font-display">Silver 2</strong>
-            <b className="font-number">{labels.score}: 2000</b>
-            <small>{displayName}</small>
+            <b className="font-number leaderboard-mmr">{labels.score}: 2000</b>
           </div>
           <img src="/leaderboard-bear-rank.png" alt="" />
         </article>
         <article className="leaderboard-feature-card leaderboard-pool-feature">
           <span>{labels.pool}</span>
           <div className="leaderboard-pool-value">
-            <strong className="font-number">2 000</strong>
-            <span>TON</span>
+            <strong className="font-number">2000 TON</strong>
             <img src="/leaderboard-ton.png" alt="" />
           </div>
         </article>
@@ -1669,6 +1659,7 @@ function StoreApp() {
     ['catalog', text.tabs.catalog],
     ['leaderboard', text.tabs.leaderboard],
     ['roulette', rouletteCopy.tab],
+    ['wallet', text.tabs.wallet],
   ]
   const availableRouletteCoupons = Array.isArray(rouletteSpin?.coupons)
     ? rouletteSpin.coupons.filter((coupon) => coupon?.code && !coupon.usedAt)
@@ -1680,22 +1671,6 @@ function StoreApp() {
   const visibleProducts = activeGroup === 'Все'
     ? products
     : products.filter((product) => product.group === activeGroup)
-
-  function closeMiniApp() {
-    const telegramApp = window.Telegram?.WebApp
-
-    if (telegramApp?.close) {
-      telegramApp.close()
-      return
-    }
-
-    if (window.history.length > 1) {
-      window.history.back()
-      return
-    }
-
-    window.location.assign('/')
-  }
 
   useEffect(() => {
     const telegramApp = window.Telegram?.WebApp
@@ -2019,14 +1994,6 @@ function StoreApp() {
             >
               {text.languageLabel}
             </button>
-            <button
-              type="button"
-              className="store-close-button"
-              aria-label={language === 'ru' ? 'Закрыть приложение' : language === 'zh' ? '关闭应用' : 'Close app'}
-              onClick={closeMiniApp}
-            >
-              ×
-            </button>
           </div>
           <div className="profile-entry">
             <button
@@ -2035,7 +2002,7 @@ function StoreApp() {
               aria-label={text.profileButton}
               onClick={() => setIsProfileMenuOpen((current) => !current)}
             >
-              <StoreLogoMark />
+              <UserAvatar user={telegramUser} />
             </button>
             {isProfileMenuOpen ? (
               <div className="profile-entry-menu">
@@ -2142,7 +2109,7 @@ function StoreApp() {
           ) : null}
         </>
       ) : activeTab === 'leaderboard' ? (
-        <LeaderboardPanel text={text} orders={orders} user={telegramUser} language={language} />
+        <LeaderboardPanel text={text} orders={orders} language={language} />
       ) : activeTab === 'profile' ? (
         <ProfilePanel
           user={telegramUser}
@@ -2153,6 +2120,10 @@ function StoreApp() {
           onProfileViewChange={setProfileView}
           activationUrl={activationUrl}
         />
+      ) : activeTab === 'wallet' ? (
+        <section className="empty-panel wallet-panel">
+          <h2>Wallet</h2>
+        </section>
       ) : (
         <RoulettePanel
           language={language}
