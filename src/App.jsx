@@ -1567,9 +1567,9 @@ function ProfilePanel({ user, text, orders, joinedAt, profileView, onProfileView
 
 function LeaderboardPanel({ user, language }) {
   const leaderboardLabels = {
-    ru: { season: 'Реферальная арена', subtitle: 'Приглашай друзей и поднимай свой ранг', rank: 'Твой ранг', score: 'MMR', pool: 'Призовой фонд сезона', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 100 participants receive rewards from the prize pool.', ranks: 'Ранги', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
-    en: { season: 'Referral Arena', subtitle: 'Invite friends and climb the ranks', rank: 'Your rank', score: 'MMR', pool: 'Season prize pool', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 100 participants receive rewards from the prize pool.', ranks: 'Ranks', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
-    zh: { season: '推荐竞技场', subtitle: '邀请好友，提升你的段位', rank: '你的段位', score: 'MMR', pool: '赛季奖池', how: '玩法说明', howText: '通过你的专属链接邀请好友，获取 MMR 并提升排名。赛季结束时，前 100 名参与者将获得奖池奖励。', ranks: '段位', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
+    ru: { season: 'Реферальная арена', subtitle: 'Приглашай друзей и поднимай свой ранг', rank: 'Твой ранг', score: 'MMR', pool: 'Призовой фонд сезона', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 100 participants receive rewards from the prize pool.', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
+    en: { season: 'Referral Arena', subtitle: 'Invite friends and climb the ranks', rank: 'Your rank', score: 'MMR', pool: 'Season prize pool', how: 'How it works', howText: 'Invite friends with your link, earn MMR and climb the leaderboard. At the end of the season the top 100 participants receive rewards from the prize pool.', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
+    zh: { season: '推荐竞技场', subtitle: '邀请好友，提升你的段位', rank: '你的段位', score: 'MMR', pool: '赛季奖池', how: '玩法说明', howText: '通过你的专属链接邀请好友，获取 MMR 并提升排名。赛季结束时，前 100 名参与者将获得奖池奖励。', invite: 'Invite friends', leaderboard: 'LeaderBoard' },
   }
   const labels = leaderboardLabels[language] || leaderboardLabels.ru
   const [isHowOpen, setIsHowOpen] = useState(false)
@@ -1603,12 +1603,20 @@ function LeaderboardPanel({ user, language }) {
           </div>
         </article>
       </div>
-      <button type="button" className="leaderboard-primary-button">{labels.leaderboard}</button>
-      <button type="button" className="leaderboard-invite-button">{labels.invite}</button>
-      <button type="button" className={`leaderboard-how-button${isHowOpen ? ' active' : ''}`} onClick={() => setIsHowOpen((current) => !current)}>
-        <img src="/leaderboard-scroll.png" alt="" />
-        <span>{labels.how}</span>
-      </button>
+      <div className="leaderboard-action-row">
+        <button type="button" className={`leaderboard-action-button leaderboard-how-action${isHowOpen ? ' active' : ''}`} onClick={() => setIsHowOpen((current) => !current)}>
+          <img src="/leaderboard-wrench.png" alt="" />
+          <span>{labels.how}</span>
+        </button>
+        <button type="button" className="leaderboard-action-button leaderboard-board-action">
+          <img src="/leaderboard-trophy.png" alt="" />
+          <span>{labels.leaderboard}</span>
+        </button>
+        <button type="button" className="leaderboard-action-button leaderboard-invite-action">
+          <img src="/leaderboard-chain.png" alt="" />
+          <span>{labels.invite}</span>
+        </button>
+      </div>
       {isHowOpen ? <p className="leaderboard-how-copy">{labels.howText}</p> : null}
     </section>
   )

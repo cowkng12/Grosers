@@ -2904,63 +2904,70 @@ body.modal-open {
   filter: drop-shadow(0 3px 5px rgba(255, 159, 28, .34));
 }
 
-.leaderboard-primary-button,
-.leaderboard-invite-button,
-.leaderboard-how-button {
-  width: 100%;
-  margin-top: 12px;
-  border-radius: 999px;
-  font-family: var(--font-display);
-  font-size: 1.12rem;
-  letter-spacing: .01em;
-  text-shadow: 1px 2px 0 rgba(0,0,0,.52);
+.leaderboard-action-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
 }
 
-.leaderboard-primary-button {
-  min-height: 58px;
-  border: 1px solid #ffb12e;
-  background: linear-gradient(180deg, #ffab0b, #f28b00);
-  color: #080604;
-  font-size: 1.7rem;
-  cursor: default;
-  box-shadow: 0 10px 24px rgba(255, 143, 0, .18), inset 0 1px 0 rgba(255,255,255,.2);
-}
-
-.leaderboard-invite-button {
-  min-height: 50px;
-  border: 1px solid #d77a11;
-  background: linear-gradient(180deg, #e79224, #bd5f09);
-  color: #1b0d02;
-  cursor: pointer;
-  box-shadow: 0 8px 18px rgba(205, 102, 8, .15), inset 0 1px 0 rgba(255,255,255,.18);
-}
-
-.leaderboard-how-button {
+.leaderboard-action-button {
   display: flex;
-  min-height: 58px;
+  min-width: 0;
+  min-height: 124px;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  border: 1px solid #ffca70;
-  background: linear-gradient(180deg, #ffc267, #ffb34a);
-  color: #1b0d02;
+  gap: 8px;
+  border: 1px solid #ffbf3f;
+  border-radius: 24px;
+  padding: 14px 8px;
+  background: #ffae19;
+  color: #080604;
+  font-family: var(--font-display);
+  font-size: clamp(.9rem, 3.2vw, 1.2rem);
+  line-height: 1;
+  text-align: center;
+  text-shadow: 1px 2px 0 rgba(255, 255, 255, .12);
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(255, 177, 62, .13), inset 0 1px 0 rgba(255,255,255,.4);
+  box-shadow: 0 10px 22px rgba(255, 143, 0, .16), inset 0 1px 0 rgba(255,255,255,.24);
 }
 
-.leaderboard-how-button img {
-  width: 42px;
-  height: 42px;
+.leaderboard-action-button img {
+  width: 48px;
+  height: 48px;
   object-fit: contain;
-  filter: drop-shadow(0 3px 3px rgba(0,0,0,.35));
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .3));
 }
 
-.leaderboard-how-button span {
-  text-shadow: 1px 1px 0 rgba(255,255,255,.22);
+.leaderboard-board-action img {
+  width: 50px;
+  height: 50px;
 }
 
-.leaderboard-how-button.active {
-  background: linear-gradient(180deg, #ffcf85, #f5a93b);
+.leaderboard-action-button:hover,
+.leaderboard-action-button.active {
+  background: #ffb52e;
+  box-shadow: 0 12px 26px rgba(255, 143, 0, .25), inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+@media (max-width: 560px) {
+  .leaderboard-action-row {
+    gap: 8px;
+  }
+
+  .leaderboard-action-button {
+    min-height: 112px;
+    border-radius: 22px;
+    padding-inline: 4px;
+    font-size: .84rem;
+  }
+
+  .leaderboard-action-button img,
+  .leaderboard-board-action img {
+    width: 42px;
+    height: 42px;
+  }
 }
 
 .leaderboard-how-copy {
