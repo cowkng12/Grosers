@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { TonConnectUI } from '@tonconnect/ui'
 import './App.css'
 
 const products = [
@@ -416,7 +417,7 @@ const translations = {
     walletBalance: 'Баланс',
     walletConnect: 'Подключить кошелек',
     walletConnected: 'Кошелек подключен',
-    walletConnectHint: 'Подключение TON-кошелька будет доступно после добавления TON Connect.',
+    walletConnectHint: 'Подключите кошелек, чтобы пополнять баланс и выводить награды.',
     confirmPurchase: ({ product, price }) => `Подтвердить покупку ${product} за $${price}?`,
     topUpSuccess: 'Успешно, в течении 10-и минут вам напишет менеджер, чтобы выдать товар. Ожидайте.',
     topUpError: 'Не удалось создать ссылку на оплату. Попробуйте позже.',
@@ -552,7 +553,7 @@ const translations = {
     walletBalance: 'Balance',
     walletConnect: 'Connect wallet',
     walletConnected: 'Wallet connected',
-    walletConnectHint: 'TON wallet connection will be available after TON Connect is added.',
+    walletConnectHint: 'Connect a wallet to top up your balance and withdraw rewards.',
     confirmPurchase: ({ product, price }) => `Confirm purchase of ${product} for $${price}?`,
     topUpSuccess: 'Success. A manager will message you within 10 minutes to deliver the product. Please wait.',
     topUpError: 'Could not create a payment link. Try again later.',
@@ -688,7 +689,7 @@ const translations = {
     walletBalance: '余额',
     walletConnect: '连接钱包',
     walletConnected: '钱包已连接',
-    walletConnectHint: '添加 TON Connect 后即可连接 TON 钱包。',
+    walletConnectHint: '连接钱包即可充值余额并提取奖励。',
     confirmPurchase: ({ product, price }) => `确认以 $${price} 购买 ${product}？`,
     topUpSuccess: '支付成功。经理会在 10 分钟内联系你并发放商品，请稍候。',
     topUpError: '无法创建付款链接。请稍后再试。',
@@ -1643,6 +1644,8 @@ function StoreApp() {
   const [isProductPaymentOpen, setIsProductPaymentOpen] = useState(false)
   const [isTopUpPanelOpen, setIsTopUpPanelOpen] = useState(false)
   const [isCouponListOpen, setIsCouponListOpen] = useState(false)
+  const tonConnectUIRef = useRef(null)
+  const [connectedWalletAddress, setConnectedWalletAddress] = useState('')
   const [balance, setBalance] = useState(0)
   const [orders, setOrders] = useState([])
   const [productStockCounts, setProductStockCounts] = useState(() => defaultProductStockCounts)
@@ -1674,7 +1677,7 @@ function StoreApp() {
     ['catalog', text.tabs.catalog],
     ['leaderboard', text.tabs.leaderboard],
     ['roulette', text.tabs.roulette || rouletteCopy.tab],
-    ['wallet', `${text.tabs.wallet}: ${formatPrice(balance)}`],
+    ['wallet', text.tabs.wallet],
   ]
   const availableRouletteCoupons = Array.isArray(rouletteSpin?.coupons)
     ? rouletteSpin.coupons.filter((coupon) => coupon?.code && !coupon.usedAt)
@@ -1703,6 +1706,28 @@ function StoreApp() {
       telegramApp?.setBottomBarColor?.('#02040a')
     }
   }, [])
+
+  useEffect(() => {
+    const manifestUrl = import.meta.env.VITE_TONCONNECT_MANIFEST_URL?.trim()
+      || `${window.location.origin}/tonconnect-manifest.json`
+    const tonConnectUI = new TonConnectUI({ manifestUrl })
+
+    tonConnectUIRef.current = tonConnectUI
+    const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
+      setConnectedWalletAddress(wallet?.account?.address || '')
+    })
+
+    return () => {
+      unsubscribe?.()
+      tonConnectUIRef.current = null
+    }
+  }, [])
+
+  async function handleConnectWallet() {
+    if (!tonConnectUIRef.current) return
+
+    await tonConnectUIRef.current.openModal()
+  }
 
   useEffect(() => {
     document.body.classList.toggle('modal-open', isTopUpPanelOpen)
@@ -2142,8 +2167,8 @@ function StoreApp() {
             <strong>{formatPrice(balance)}</strong>
           </header>
           <p className="wallet-panel-balance">{text.walletBalance}</p>
-          <button type="button" className="wallet-connect-button" disabled>
-            {text.walletConnect}
+          <button type="button" className="wallet-connect-button" onClick={handleConnectWallet}>
+            {connectedWalletAddress ? text.walletConnected : text.walletConnect}
           </button>
           <p className="wallet-connect-hint">{text.walletConnectHint}</p>
           <button type="button" className="wallet-topup-button" onClick={() => setIsTopUpPanelOpen(true)}>
