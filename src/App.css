@@ -3107,3 +3107,222 @@ body.modal-open {
 .leaderboard-how-button.active {
   background: linear-gradient(180deg, #ffad24, #f28d08);
 }
+
+/* Official light payment and app theme. */
+:root {
+  color-scheme: light;
+  --bg: #f4f6f8;
+  --bg-soft: #ffffff;
+  --panel: #ffffff;
+  --panel-strong: #ffffff;
+  --panel-muted: #eef1f4;
+  --line: rgba(15, 23, 42, .12);
+  --line-strong: rgba(15, 23, 42, .28);
+  --text: #111827;
+  --muted: #5b6472;
+  --subtle: #7a8492;
+  --menu-bg: rgba(255, 255, 255, .96);
+  --menu-bg-soft: #f3f5f7;
+  --menu-active: linear-gradient(135deg, #fff1d6, #ff9f1c);
+  --menu-glow: 0 16px 36px rgba(15, 23, 42, .1);
+  --shadow: 0 18px 50px rgba(15, 23, 42, .1);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.page-shell,
+.hero-block,
+.catalog-layout,
+.catalog-panel,
+.profile-panel,
+.leaderboard-panel,
+.roulette-page,
+.topup-panel,
+.product-card,
+.product-payment-panel,
+.bottom-tabs {
+  color: #111827;
+}
+
+.hero-block,
+.catalog-panel,
+.profile-panel,
+.leaderboard-panel,
+.roulette-page,
+.product-card,
+.product-payment-panel,
+.topup-panel {
+  background: #fff;
+  border-color: var(--line);
+  box-shadow: var(--shadow);
+}
+
+.bottom-tabs {
+  background: rgba(255, 255, 255, .96);
+  border-top-color: var(--line);
+  box-shadow: 0 -12px 30px rgba(15, 23, 42, .08);
+}
+
+.bottom-tabs button,
+.bottom-tabs button.active {
+  background: #fff;
+  border-color: #d6dce3;
+  color: #111827;
+  box-shadow: none;
+}
+
+.bottom-tabs button.active {
+  border-color: #ff9f1c;
+}
+
+.product-card h3,
+.product-card strong,
+.profile-panel h2,
+.leaderboard-panel h1,
+.leaderboard-panel h2,
+.roulette-page h1,
+.roulette-page h2 {
+  color: #111827;
+}
+
+.activation-page,
+.wallet-pay-page {
+  background: #f4f6f8;
+  color: var(--text);
+}
+
+.activation-card,
+.wallet-pay-card {
+  border-color: var(--line);
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.wallet-pay-card {
+  background: #fff;
+}
+
+.wallet-pay-card::before {
+  background: linear-gradient(120deg, transparent, rgba(15, 23, 42, .04), transparent);
+}
+
+.activation-card h1,
+.wallet-pay-card h1,
+.wallet-pay-details strong {
+  color: #111827;
+}
+
+.activation-copy,
+.wallet-pay-details span,
+.wallet-pay-card .activation-copy {
+  color: #5b6472;
+}
+
+.wallet-pay-summary,
+.wallet-pay-meta,
+.wallet-pay-address,
+.wallet-pay-amount {
+  border-color: var(--line);
+  background: #f8fafc;
+  box-shadow: none;
+}
+
+.wallet-pay-methods button,
+.wallet-pay-card button {
+  border-color: #d6dce3;
+  background: #fff;
+  color: #111827;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, .07);
+}
+
+.wallet-pay-methods button:hover,
+.wallet-pay-card button:hover {
+  border-color: #ff9f1c;
+  background: #fff8ed;
+}
+
+.wallet-pay-transfer {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+}
+
+.wallet-pay-transfer-info {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.wallet-pay-qr {
+  width: 100%;
+  max-width: 280px;
+  border-color: #d6dce3;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .08);
+}
+
+.wallet-pay-address > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.wallet-pay-address code {
+  min-width: 0;
+  flex: 1;
+  border-color: #d6dce3;
+  background: #fff;
+  color: #111827;
+}
+
+.wallet-pay-copy-icon {
+  display: grid;
+  width: 38px !important;
+  min-width: 38px;
+  height: 38px;
+  place-items: center;
+  padding: 8px !important;
+  border: 1px solid #d6dce3 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.wallet-pay-copy-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.wallet-pay-amount {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+}
+
+.wallet-pay-card .wallet-pay-back-button {
+  border-color: #d6dce3;
+  background: #f8fafc;
+  color: #111827;
+}
+
+.wallet-pay-card .wallet-pay-paid-button {
+  border-color: #ff9f1c;
+  background: #ff9f1c;
+  color: #111827;
+}
+
+@media (max-width: 640px) {
+  .wallet-pay-transfer {
+    grid-template-columns: 1fr;
+  }
+
+  .wallet-pay-qr {
+    justify-self: center;
+  }
+}

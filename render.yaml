@@ -45,9 +45,19 @@ services:
       - key: TON_USD_RATE_API_URL
         value: https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd
       - key: WALLET_PAY_TON_ADDRESS
-        value: UQC8r4dra0Gy1VlxktwRnsTRTcPoKNoqK4xQH94P3SuRRYWC
-      - key: WALLET_PAY_TRC20_ADDRESS
-        value: TJDqXkQx5nqFhq7RNtySUMCYTZ5Hk96o3G
+        sync: false
+      - key: WALLET_PAY_TRON_ADDRESS
+        sync: false
+      - key: WALLET_PAY_ETHEREUM_ADDRESS
+        sync: false
+      - key: WALLET_PAY_BITCOIN_ADDRESS
+        sync: false
+      - key: WALLET_PAY_BASE_ADDRESS
+        sync: false
+      - key: WALLET_PAY_BSC_ADDRESS
+        sync: false
+      - key: WALLET_PAY_ARBITRUM_ADDRESS
+        sync: false
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY

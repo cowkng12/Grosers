@@ -1278,30 +1278,40 @@ function WalletPaymentPage() {
                   ))}
                 </div>
               ) : null}
-              {qrData ? (
-                <img
-                  className="wallet-pay-qr"
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${qrData}`}
-                  alt={text.qrAlt}
-                />
-              ) : null}
               {payment.walletPayment ? (
-                <>
+                <div className="wallet-pay-transfer">
+                  {qrData ? (
+                    <img
+                      className="wallet-pay-qr"
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${qrData}`}
+                      alt={text.qrAlt}
+                    />
+                  ) : null}
+                  <div className="wallet-pay-transfer-info">
                   <div className="wallet-pay-meta">
                     <span>{text.network}</span>
                     <strong>{payment.walletPayment.network}</strong>
                   </div>
                   <div className="wallet-pay-address">
                     <span>{text.address}</span>
-                    <code>{payment.walletPayment.address}</code>
+                    <div>
+                      <button type="button" className="wallet-pay-copy-icon" onClick={copyAddress} aria-label={text.copy} title={text.copy}>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" strokeWidth="2" /></svg>
+                      </button>
+                      <code>{payment.walletPayment.address}</code>
+                    </div>
                   </div>
-                </>
+                  <div className="wallet-pay-amount">
+                    <span>{text.amount}</span>
+                    <strong>{payment.walletPayment.payableAmount} {payment.walletPayment.asset}</strong>
+                  </div>
+                  </div>
+                </div>
               ) : null}
             </div>
             {payment.walletPayment ? (
               <>
                 <button type="button" className="wallet-pay-back-button" onClick={returnToMethods}>{text.back}</button>
-                <button type="button" onClick={copyAddress}>{text.copy}</button>
                 <button type="button" className="wallet-pay-paid-button" onClick={markPaid}>{text.paid}</button>
                 <p className="activation-copy">{text.warning}</p>
               </>

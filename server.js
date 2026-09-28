@@ -34,14 +34,49 @@ const walletPayOptions = [
     label: 'TON',
     network: 'TON',
     asset: 'TON / GRAM',
-    address: process.env.WALLET_PAY_TON_ADDRESS?.trim() || 'UQC8r4dra0Gy1VlxktwRnsTRTcPoKNoqK4xQH94P3SuRRYWC',
+    address: process.env.WALLET_PAY_TON_ADDRESS?.trim() || 'UQCH6Gq69GF1DD4vCO7GM5oBHKyJGmNIxRofBMIicM8EipIM',
   },
   {
-    id: 'trc20',
-    label: 'USDT TRC20',
-    network: 'TRC20',
-    asset: 'USDT',
-    address: process.env.WALLET_PAY_TRC20_ADDRESS?.trim() || 'TJDqXkQx5nqFhq7RNtySUMCYTZ5Hk96o3G',
+    id: 'tron',
+    label: 'TRON',
+    network: 'TRON',
+    asset: 'TRX',
+    address: process.env.WALLET_PAY_TRON_ADDRESS?.trim() || 'THy3oTmSzbuT3RzPzhPD3JJGfPwCeubX42',
+  },
+  {
+    id: 'ethereum',
+    label: 'Ethereum',
+    network: 'Ethereum',
+    asset: 'ETH',
+    address: process.env.WALLET_PAY_ETHEREUM_ADDRESS?.trim() || '0xcE7Cd3b83dAb5eFCf0a9f8eFfC3Fa5A30b89f0E4',
+  },
+  {
+    id: 'bitcoin',
+    label: 'Bitcoin',
+    network: 'Bitcoin',
+    asset: 'BTC',
+    address: process.env.WALLET_PAY_BITCOIN_ADDRESS?.trim() || 'bc1q58hklkzmpx5rsxc2jhqftkkk9gux9y6m2t5l9a',
+  },
+  {
+    id: 'base',
+    label: 'Base',
+    network: 'Base',
+    asset: 'ETH',
+    address: process.env.WALLET_PAY_BASE_ADDRESS?.trim() || '0xcE7Cd3b83dAb5eFCf0a9f8eFfC3Fa5A30b89f0E4',
+  },
+  {
+    id: 'bsc',
+    label: 'BSC',
+    network: 'BSC',
+    asset: 'BNB',
+    address: process.env.WALLET_PAY_BSC_ADDRESS?.trim() || '0xcE7Cd3b83dAb5eFCf0a9f8eFfC3Fa5A30b89f0E4',
+  },
+  {
+    id: 'arbitrum',
+    label: 'Arbitrum',
+    network: 'Arbitrum',
+    asset: 'ETH',
+    address: process.env.WALLET_PAY_ARBITRUM_ADDRESS?.trim() || '0xcE7Cd3b83dAb5eFCf0a9f8eFfC3Fa5A30b89f0E4',
   },
 ].filter((option) => option.address)
 
@@ -71,13 +106,36 @@ async function currentTonUsdRate() {
 
 async function walletPayableAmountUsdToAsset(amountUsd, walletPayOption, uniquePart) {
   const normalizedAmount = Number(amountUsd) || 0
+  const coinIds = {
+    ton: 'the-open-network',
+    tron: 'tron',
+    ethereum: 'ethereum',
+    bitcoin: 'bitcoin',
+    base: 'ethereum',
+    bsc: 'binancecoin',
+    arbitrum: 'ethereum',
+  }
+  const precision = walletPayOption?.id === 'bitcoin' ? 8 : walletPayOption?.id === 'ethereum' || walletPayOption?.id === 'base' || walletPayOption?.id === 'arbitrum' ? 6 : 4
+  const now = Date.now()
+  const cache = currentTonUsdRate.cache || (currentTonUsdRate.cache = new Map())
+  const coinId = coinIds[walletPayOption?.id]
+  const cachedRate = cache.get(coinId)
+  let rate = cachedRate && now - cachedRate.updatedAt < 60_000 ? cachedRate.value : 0
 
-  if (walletPayOption?.id === 'ton') {
-    const rate = await currentTonUsdRate()
-    return Number((normalizedAmount / rate + uniquePart / 100000).toFixed(4))
+  if (!rate) {
+    const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`)
+    const data = await response.json().catch(() => ({}))
+    rate = Number(data?.[coinId]?.usd)
+
+    if (!response.ok || !Number.isFinite(rate) || rate <= 0) {
+      throw new Error(`Unable to get ${walletPayOption?.asset || 'crypto'} exchange rate`)
+    }
+
+    cache.set(coinId, { value: rate, updatedAt: now })
   }
 
-  return Number((normalizedAmount + uniquePart / 10000).toFixed(4))
+  const uniqueness = uniquePart * (10 ** -precision)
+  return Number((normalizedAmount / rate + uniqueness).toFixed(precision))
 }
 const storeFilePath = process.env.STORE_FILE_PATH?.trim() || path.join(__dirname, 'data', 'store.json')
 const supabaseUrl = process.env.SUPABASE_URL?.trim()
@@ -1328,7 +1386,14 @@ app.post('/api/topups/wallet', async (request, response) => {
   }
 
   const uniquePart = (topups.filter((topup) => topup.status !== 'paid').length % 90) + 10
-  const payableAmount = await walletPayableAmountUsdToAsset(promo?.payableAmount || normalizedAmount, walletPayOption, uniquePart)
+  let payableAmount
+
+  try {
+    payableAmount = await walletPayableAmountUsdToAsset(promo?.payableAmount || normalizedAmount, walletPayOption, uniquePart)
+  } catch (error) {
+    response.status(502).json({ error: error.message })
+    return
+  }
   const topup = {
     id: `top_${Date.now()}`,
     amount: normalizedAmount,
@@ -1494,7 +1559,14 @@ app.post('/api/topups/:topupId/wallet', async (request, response) => {
   }
 
   const uniquePart = (topups.filter((item) => item.status !== 'paid').length % 90) + 10
-  const payableAmount = await walletPayableAmountUsdToAsset(topup.promo?.payableAmount || topup.amount, walletPayOption, uniquePart)
+  let payableAmount
+
+  try {
+    payableAmount = await walletPayableAmountUsdToAsset(topup.promo?.payableAmount || topup.amount, walletPayOption, uniquePart)
+  } catch (error) {
+    response.status(502).json({ error: error.message })
+    return
+  }
   topup.status = 'wallet_pending'
   topup.paymentMethod = 'wallet'
   topup.walletPayment = {
